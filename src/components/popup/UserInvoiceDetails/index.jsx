@@ -7,7 +7,6 @@ import {
   Divider,
   FormControl,
   FormLabel,
-  Grid,
   GridItem,
   HStack,
   Image,
@@ -138,7 +137,7 @@ const UserInvoiceDetails = (payload) => {
       <ModalContent>
         <ModalHeader>Thanh toán</ModalHeader>
         <ModalBody pb={6}>
-          <SimpleGrid columns={[1, 1 ,3]} columnGap={10} spacing={10}>
+          <SimpleGrid columns={[1, 1, 3]} columnGap={10} spacing={10}>
             <GridItem>
               <Text fontSize="lg" fontWeight={600} mb={2}>
                 Thông tin mua hàng

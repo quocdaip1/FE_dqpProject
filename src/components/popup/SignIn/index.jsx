@@ -28,7 +28,7 @@ const schema = yup
     password: yup.string().required("Email là trường bắt buộc!"),
   })
   .required();
-const SignIn = ({ isOpen, onClose }) => {
+const SignIn = (payload) => {
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
 
@@ -51,7 +51,7 @@ const SignIn = ({ isOpen, onClose }) => {
       const { accessToken, user } = response.data.payload;
       setUserData(user);
       setToken(accessToken);
-      onClose();
+      payload.onClose();
       reset();
     }
   };
@@ -60,8 +60,8 @@ const SignIn = ({ isOpen, onClose }) => {
     <Modal
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={payload.isOpen}
+      onClose={payload.onClose}
     >
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
@@ -109,7 +109,7 @@ const SignIn = ({ isOpen, onClose }) => {
           <Button colorScheme="blue" mr={3} type="submit">
             Đăng nhập
           </Button>
-          <Button onClick={onClose}>Hủy</Button>
+          <Button onClick={payload.onClose}>Hủy</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

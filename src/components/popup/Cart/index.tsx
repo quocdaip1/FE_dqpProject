@@ -13,15 +13,15 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 
-const Cart = ({ isOpen, onClose }) => {
+const Cart = (payload) => {
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
   return (
     <Modal
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={payload.isOpen}
+      onClose={payload.onClose}
     >
       <ModalOverlay />
       <ModalContent>
@@ -42,7 +42,7 @@ const Cart = ({ isOpen, onClose }) => {
           <Button colorScheme="blue" mr={3}>
             Đăng nhập
           </Button>
-          <Button onClick={onClose}>Hủy</Button>
+          <Button onClick={payload.onClose}>Hủy</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

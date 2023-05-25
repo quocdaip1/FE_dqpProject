@@ -123,7 +123,7 @@ const AdminProductDetails = (payload) => {
       setValue("description", payload.product.description);
       setValue("image", payload.product.image);
     }
-  }, [payload.isOpen]);
+  }, [payload.isOpen, reset, payload.product, setValue]);
 
   const createProduct = async (data) => {
     const response = await axios.post(

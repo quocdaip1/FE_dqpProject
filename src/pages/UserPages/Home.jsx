@@ -188,7 +188,7 @@ const Home = () => {
                   <PopoverBody padding={0}>
                     <List spacing={3}>
                       {subCategory.map((sub) => (
-                        <ListItem key={`sub-${sub.label}`}>
+                        <ListItem key={`sub-${sub.label}-${category.label}`}>
                           <ListItem>
                             <Popover trigger="hover" placement="right-start">
                               <PopoverTrigger>
@@ -209,7 +209,7 @@ const Home = () => {
                                   <List spacing={3}>
                                     {sub.child.map((item) => (
                                       <ListItem
-                                        key={`child-sub-${sub.label}-${category.label}`}
+                                        key={`child-sub-${item.value}-${sub.label}-${category.label}`}
                                       >
                                         <Button
                                           variant="ghost"

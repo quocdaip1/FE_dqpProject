@@ -41,7 +41,7 @@ const schema = yup
   })
   .required();
 
-const SignUp = ({ isOpen, onClose }) => {
+const SignUp = (payload) => {
   const toast = useToast();
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
@@ -62,7 +62,7 @@ const SignUp = ({ isOpen, onClose }) => {
     const { status, message } = response.data.payload;
 
     if (status) {
-      onClose();
+      payload.onClose();
       reset();
     }
     toast({
@@ -77,8 +77,8 @@ const SignUp = ({ isOpen, onClose }) => {
     <Modal
       initialFocusRef={initialRef}
       finalFocusRef={finalRef}
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={payload.isOpen}
+      onClose={payload.onClose}
     >
       <ModalOverlay />
       <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
@@ -203,7 +203,7 @@ const SignUp = ({ isOpen, onClose }) => {
           <Button colorScheme="blue" mr={3} type="submit">
             Đăng ký
           </Button>
-          <Button onClick={onClose}>Hủy</Button>
+          <Button onClick={payload.onClose}>Hủy</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
