@@ -45,15 +45,15 @@ const categoryOptions = [
 const sizeOptions = [
   {
     label: "Nhỏ",
-    value: "sm",
+    value: "small",
   },
   {
     label: "Trung",
-    value: "md",
+    value: "medium",
   },
   {
     label: "Lớn",
-    value: "lg",
+    value: "big",
   },
 ];
 
@@ -185,13 +185,13 @@ const ProductList = () => {
                       {
                         categoryOptions.find(
                           (option) => option.value === item.categoryCode
-                        ).label
+                        )?.label
                       }
                     </Td>
                     <Td>
                       {
                         sizeOptions.find((option) => option.value === item.size)
-                          .label
+                          ?.label
                       }
                     </Td>
                     <Td>
@@ -204,7 +204,7 @@ const ProductList = () => {
                       {
                         statusOptions.find(
                           (option) => option.value === item.status
-                        ).label
+                        )?.label
                       }
                     </Td>
 

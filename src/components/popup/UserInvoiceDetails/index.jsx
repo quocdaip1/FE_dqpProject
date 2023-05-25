@@ -20,6 +20,7 @@ import {
   ModalOverlay,
   Radio,
   RadioGroup,
+  SimpleGrid,
   Stack,
   Text,
   VStack,
@@ -137,7 +138,7 @@ const UserInvoiceDetails = (payload) => {
       <ModalContent>
         <ModalHeader>Thanh toán</ModalHeader>
         <ModalBody pb={6}>
-          <Grid templateColumns="repeat(3, 1fr)" columnGap={10}>
+          <SimpleGrid columns={[1, 1 ,3]} columnGap={10} spacing={10}>
             <GridItem>
               <Text fontSize="lg" fontWeight={600} mb={2}>
                 Thông tin mua hàng
@@ -250,7 +251,7 @@ const UserInvoiceDetails = (payload) => {
               </Text>
               {_renderProduct()}
             </GridItem>
-          </Grid>
+          </SimpleGrid>
         </ModalBody>
 
         <ModalFooter>

@@ -1,48 +1,116 @@
 import {
   Box,
-  Grid,
   GridItem,
   AspectRatio,
   Image,
   Text,
+  Stack,
+  TabIndicator,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverBody,
+  List,
+  ListItem,
+  Button,
+  Icon,
+  VStack,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import firstThumb from "../../assets/product-1.png";
-import secondThumb from "../../assets/product-2.png";
-import thirdThumb from "../../assets/product-3.png";
-import fourthThumb from "../../assets/product-4.png";
-import { SignIn, SignUp, UserProductDetails } from "../../components/popup";
+import { UserProductDetails } from "../../components/popup";
 import React from "react";
 import axios from "axios";
-const examplePayload = [
+import { Pagination } from "../../components/common";
+import { Tabs, TabList, Tab } from "@chakra-ui/react";
+import { HiOutlineChevronRight, HiOutlineCube } from "react-icons/hi2";
+
+const subCategory = [
   {
-    name: "Dây Chuyền Bạc 925 Đính Đá Shine Bright - VCN06",
-    price: 590000,
-    thumb: firstThumb,
-    secondThumb: fourthThumb,
+    label: "Chất liệu",
+    value: "material",
+    child: [
+      {
+        label: "Bạc Ý 925",
+        value: "bacY925",
+      },
+      {
+        label: "Ngọc Trai",
+        value: "ngocTrai",
+      },
+      {
+        label: "Đá CZ",
+        value: "daCZ",
+      },
+    ],
   },
   {
-    name: "Dây Chuyền Bạc 925 Xích Chữ Nhật Và Chuỗi Hạt Trai Tự Nhiên",
-    price: 1590000,
-    thumb: secondThumb,
-    secondThumb: firstThumb,
+    label: "Kích thước",
+    value: "size",
+    child: [
+      {
+        label: "Nhỏ",
+        value: "small",
+      },
+      {
+        label: "Trung",
+        value: "medium",
+      },
+
+      {
+        label: "Lớn",
+        value: "big",
+      },
+    ],
   },
   {
-    name: "Dây Chuyền Bạc 925 Đính Đá Ngọc Trai Tự Nhiên - VCN05",
-    price: 590000,
-    thumb: thirdThumb,
-    secondThumb: secondThumb,
+    label: "Phong cách",
+    value: "style",
+    child: [
+      {
+        label: "Sweet Korean",
+        value: "sweetKorean",
+      },
+      {
+        label: "Cool Minimalist",
+        value: "coolMinimalist",
+      },
+
+      {
+        label: "Preppy Laddy",
+        value: "preppyLaddy",
+      },
+      {
+        label: "Modern Classic",
+        value: "modernClassic",
+      },
+      {
+        label: "Gifts",
+        value: "gifts",
+      },
+    ],
+  },
+];
+
+const categoryOptions = [
+  {
+    label: "Dây chuyền",
+    value: "DC",
   },
   {
-    name: "Dây Chuyền Bạc 925 Crystal Heart",
-    price: 120000,
-    thumb: fourthThumb,
-    secondThumb: firstThumb,
+    label: "Vòng tay",
+    value: "VT",
+  },
+  {
+    label: "Nhẫn",
+    value: "NH",
+  },
+  {
+    label: "Hoa tai",
+    value: "HT",
   },
 ];
 
 const Home = () => {
-  const [keyword, setKeyword] = React.useState("");
-  const [status, setStatus] = React.useState("");
   const [meta, setMeta] = React.useState({
     currentPage: 1,
     limit: 10,
@@ -51,14 +119,21 @@ const Home = () => {
   });
   const [payload, setPayload] = React.useState([]);
   const [product, setProduct] = React.useState(null);
+  const [tabIndex, setTabIndex] = React.useState(0);
+  const [filter, setFilter] = React.useState({
+    size: "",
+    style: "",
+    material: "",
+    categoryCode: "",
+  });
 
-  const fetchProduct = async (page) => {
+  const fetchProduct = async (page, filterParams) => {
     const response = await axios.get("http://localhost:8080/api/products", {
       params: {
-        keyword,
-        status,
+        keyword: "",
         page,
         limit: 10,
+        ...filterParams,
       },
     });
     const { items, meta } = response.data.payload;
@@ -67,15 +142,114 @@ const Home = () => {
   };
 
   React.useEffect(() => {
-    fetchProduct(1);
+    fetchProduct(1, filter);
   }, []);
-  const _renderPopup = () => {
+
+  const onFilter = async (category, subCategory, childSub) => {
+    const newFilter = {
+      ...filter,
+      size: "",
+      style: "",
+      material: "",
+      categoryCode: category,
+    };
+    if (childSub && subCategory) newFilter[subCategory] = childSub;
+
+    await setFilter(newFilter);
+    fetchProduct(1, newFilter);
+  };
+
+  const _renderCategoryBar = () => {
     return (
-      <>
-        <SignIn isOpen={false} />
-        <SignUp isOpen={false} />
-        <UserProductDetails isOpen={false} />
-      </>
+      <Stack padding="10px">
+        <Tabs position="relative" variant="unstyled" index={tabIndex}>
+          <TabList _focusVisible={false} boxShadow="none">
+            {categoryOptions.map((category, categoryIndex) => (
+              <Popover
+                trigger="hover"
+                placement="bottom-start"
+                key={`category-${category.label}`}
+              >
+                <PopoverTrigger>
+                  <Tab
+                    outline={0}
+                    border={0}
+                    boxShadow="none"
+                    _focus={{ boxShadow: "none", outline: "none" }}
+                    onClick={() => {
+                      setTabIndex(categoryIndex);
+                      onFilter(category.value, "", "");
+                    }}
+                  >
+                    {category.label}
+                  </Tab>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverBody padding={0}>
+                    <List spacing={3}>
+                      {subCategory.map((sub) => (
+                        <ListItem key={`sub-${sub.label}`}>
+                          <ListItem>
+                            <Popover trigger="hover" placement="right-start">
+                              <PopoverTrigger>
+                                <Button
+                                  variant="ghost"
+                                  w="98%"
+                                  textAlign="left"
+                                  justifyContent="space-between"
+                                  rightIcon={
+                                    <Icon as={HiOutlineChevronRight} />
+                                  }
+                                >
+                                  {sub.label}
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent>
+                                <PopoverBody padding={0}>
+                                  <List spacing={3}>
+                                    {sub.child.map((item) => (
+                                      <ListItem
+                                        key={`child-sub-${sub.label}-${category.label}`}
+                                      >
+                                        <Button
+                                          variant="ghost"
+                                          w="100%"
+                                          textAlign="left"
+                                          justifyContent="space-between"
+                                          onClick={() => {
+                                            setTabIndex(categoryIndex);
+                                            onFilter(
+                                              category.value,
+                                              sub.value,
+                                              item.value
+                                            );
+                                          }}
+                                        >
+                                          {item.label}
+                                        </Button>
+                                      </ListItem>
+                                    ))}
+                                  </List>
+                                </PopoverBody>
+                              </PopoverContent>
+                            </Popover>
+                          </ListItem>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+            ))}
+          </TabList>
+          <TabIndicator
+            mt="-1.5px"
+            height="2px"
+            bg="blue.500"
+            borderRadius="1px"
+          />
+        </Tabs>
+      </Stack>
     );
   };
 
@@ -129,21 +303,33 @@ const Home = () => {
 
   const _renderProductSection = () => {
     return (
-      <Box as="section" h="auto">
+      <Box as="section" flex={1}>
         <UserProductDetails
           isOpen={Boolean(product)}
           onClose={() => setProduct(null)}
           product={product}
         />
-        {_renderPopup()}
-        <Grid templateColumns="repeat(4, 1fr)" gap={5}>
-          {_renderProduct()}
-        </Grid>
+        {_renderCategoryBar()}
+        {payload.length > 0 ? (
+          <SimpleGrid columns={[1, 2, 3, 4]} gap={5} flex={1}>
+            {_renderProduct()}
+          </SimpleGrid>
+        ) : (
+          <VStack padding="40px 20px">
+            <HiOutlineCube size="100" />
+            <Text>Không có sản phẩm nào được tìm thấy</Text>
+          </VStack>
+        )}
       </Box>
     );
   };
 
-  return <>{_renderProductSection()}</>;
+  return (
+    <>
+      {_renderProductSection()}
+      <Pagination onClick={fetchProduct} meta={meta} />
+    </>
+  );
 };
 
 export default Home;

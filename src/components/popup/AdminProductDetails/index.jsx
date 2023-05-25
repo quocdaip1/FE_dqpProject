@@ -322,11 +322,11 @@ const AdminProductDetails = (payload) => {
                       {...field}
                       required={false}
                     >
-                      <option value="sm">Sweet Korean</option>
-                      <option value="md">Cool Minimalist</option>
-                      <option value="lg">Preppy Lady</option>
-                      <option value="lg">Modern Classic</option>
-                      <option value="lg">Gifts</option>
+                      <option value="sweetKorean">Sweet Korean</option>
+                      <option value="coolMinimalist">Cool Minimalist</option>
+                      <option value="preppyLady">Preppy Lady</option>
+                      <option value="modernClassic">Modern Classic</option>
+                      <option value="gifts">Gifts</option>
                     </Select>
                   )}
                 />
@@ -351,9 +351,9 @@ const AdminProductDetails = (payload) => {
                     {...field}
                     required={false}
                   >
-                    <option value="sm">Bạc Ý 925</option>
-                    <option value="md">Ngọc Trai</option>
-                    <option value="lg">Đá CZ</option>
+                    <option value="bacY925">Bạc Ý 925</option>
+                    <option value="ngocTrai">Ngọc Trai</option>
+                    <option value="daCS">Đá CZ</option>
                   </Select>
                 )}
               />

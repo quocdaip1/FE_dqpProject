@@ -117,7 +117,6 @@ const Dashboard = () => {
     const resolveChartData = [];
 
     productDashboard.data.payload.forEach((item) => {
-      console.log(item);
       resolveChartLabel.push(item.name);
       resolveChartData.push(item.total);
     });
