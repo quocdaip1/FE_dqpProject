@@ -18,6 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { setToken, setUserData } from "../../../lib/utils";
+import { useToast } from "@chakra-ui/react";
 
 const schema = yup
   .object({
@@ -31,29 +32,36 @@ const schema = yup
 const SignIn = (payload) => {
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
+  const toast = useToast();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
   const onSubmit = async (data) => {
-    const response = await axios.post(
-      "http://localhost:8080/api/auth/signin",
-      data
-    );
-    const { status } = response;
-
-    if (status === 200) {
-      const { accessToken, user } = response.data.payload;
-      setUserData(user);
-      setToken(accessToken);
-      payload.onClose();
-      reset();
-    }
+    axios
+      .post("http://localhost:8080/api/auth/signin", data)
+      .then((response) => {
+        if (response.status === 200) {
+          const { accessToken, user } = response.data.payload;
+          setUserData(user);
+          setToken(accessToken);
+          payload.onClose();
+          reset();
+        }
+      })
+      .catch((e) => {
+        toast({
+          title: e.response.data.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
   };
 
   return (
