@@ -174,9 +174,9 @@ const Dashboard = () => {
   };
 
   return (
-    <Container h="100%" padding="15px">
+    <Container maxWidth="6xl" h="100%" padding="15px">
       <Box boxShadow="xl" h="auto" p="20px" borderRadius={10}>
-        <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <Grid templateColumns="repeat(4, 1fr)" gap={6}>
           <GridItem>
             <StatisticsCard name="Sản phẩm" total={total.products} />
           </GridItem>

@@ -25,6 +25,16 @@ import {
   IconButton,
   Divider,
   Tooltip,
+  Input,
+  Link,
+  InputGroup,
+  InputRightElement,
+  Hide,
+  Show,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerBody,
 } from "@chakra-ui/react";
 import logo from "../../assets/logo.webp";
 import {
@@ -35,9 +45,12 @@ import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineChartBarSquare,
   HiOutlineXMark,
+  HiOutlineRectangleStack,
+  HiOutlineMagnifyingGlass,
+  HiOutlineBars4,
 } from "react-icons/hi2";
 import React from "react";
-import { Profile, SignIn, SignUp } from "../popup";
+import { InvoiceHistory, Profile, SignIn, SignUp } from "../popup";
 import {
   clearCookie,
   getToken,
@@ -48,10 +61,62 @@ import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCart, setCart } from "../../cartSlice";
 import UserInvoiceDetails from "../popup/UserInvoiceDetails";
+import { useSearchParams } from "react-router-dom";
+
+const navigation = [
+  {
+    label: "Menu",
+    value: "menu",
+    enable: false,
+  },
+  {
+    label: "Product",
+    value: "product",
+    enable: true,
+    child: [
+      {
+        label: "Dây chuyền",
+        value: "DC",
+        enable: true,
+      },
+      {
+        label: "Vòng tay",
+        value: "VT",
+        enable: true,
+      },
+      {
+        label: "Nhẫn",
+        value: "NH",
+        enable: true,
+      },
+      {
+        label: "Hoa tai",
+        value: "HT",
+        enable: true,
+      },
+    ],
+  },
+  {
+    label: "Gifts",
+    value: "product",
+    enable: false,
+  },
+  {
+    label: "About Us",
+    value: "aboutUs",
+    enable: false,
+  },
+  {
+    label: "Tin tức",
+    value: "product",
+    enable: false,
+  },
+];
 
 const AccountButton = (payload) => {
   const [isShowSignInPopup, setIsShowSignInPopup] = React.useState(false);
   const [isShowSignUpPopup, setIsShowSignUpPopup] = React.useState(false);
+  const [isShowInvoiceHistory, setIsSHowInvoiceHistory] = React.useState(false);
   const { onOpen, onClose, isOpen } = useDisclosure();
 
   const onSignIn = () => {
@@ -68,6 +133,12 @@ const AccountButton = (payload) => {
     onClose();
     clearCookie();
   };
+
+  const onInvoice = () => {
+    onClose();
+    setIsSHowInvoiceHistory(true);
+  };
+
   const navigate = useNavigate();
 
   const token = getToken();
@@ -85,6 +156,10 @@ const AccountButton = (payload) => {
           setIsShowSignInPopup(true);
         }}
       />
+      <InvoiceHistory
+        isOpen={isShowInvoiceHistory}
+        onClose={() => setIsSHowInvoiceHistory(false)}
+      />
 
       <Popover
         isOpen={isOpen}
@@ -94,22 +169,38 @@ const AccountButton = (payload) => {
       >
         <PopoverTrigger>
           {token ? (
-            <Button display="flex" flexDirection="column" variant="ghost">
-              <Icon as={HiOutlineUser} />
+            <Button
+              display="flex"
+              flexDirection="column"
+              variant="ghost"
+              h="auto"
+              p="5px"
+            >
+              <HStack border="1px solid black" padding="3px" borderRadius="50%">
+                <Icon as={HiOutlineUser} />
+              </HStack>
               <Text fontSize="xs" mt="6px">
-                Hi, {userData.firstName} {userData.lastName}
+                Hi, {userData.lastName}
               </Text>
             </Button>
           ) : (
-            <Button display="flex" flexDirection="column" variant="ghost">
-              <Icon as={HiOutlineUser} />
+            <Button
+              display="flex"
+              flexDirection="column"
+              variant="ghost"
+              h="auto"
+              p="5px"
+            >
+              <HStack border="1px solid black" padding="3px" borderRadius="50%">
+                <Icon as={HiOutlineUser} />
+              </HStack>
               <Text fontSize="xs" mt="6px">
                 Tài khoản
               </Text>
             </Button>
           )}
         </PopoverTrigger>
-        <PopoverContent maxW="200px">
+        <PopoverContent maxW="160px">
           <PopoverArrow />
           {token ? (
             <>
@@ -141,6 +232,18 @@ const AccountButton = (payload) => {
                   </Text>
                 </Button>
               ) : null}
+              <Button
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                variant="ghost"
+                onClick={() => onInvoice()}
+              >
+                <Icon as={HiOutlineRectangleStack} />
+                <Text fontSize="xs" ml="6px">
+                  Lịch sử mua hàng
+                </Text>
+              </Button>
               <Button
                 display="flex"
                 flexDirection="row"
@@ -330,11 +433,15 @@ const CartButton = (payload) => {
             flexDirection="column"
             variant="ghost"
             position="relative"
+            h="auto"
+            p="5px"
           >
-            <Badge rounded="full" p="2px" position="absolute" top={0} right={5}>
+            <Badge rounded="full" p="2px" position="absolute" top={0} right={3}>
               {cart.length}
             </Badge>
-            <Icon as={HiOutlineShoppingBag} />
+            <HStack border="1px solid black" padding="3px" borderRadius="50%">
+              <Icon as={HiOutlineShoppingBag} />
+            </HStack>
             <Text fontSize="xs" mt="6px">
               Giỏ hàng
             </Text>
@@ -352,29 +459,346 @@ const CartButton = (payload) => {
   );
 };
 
+const Navbar = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [keyword, setKeyword] = React.useState("");
+  return (
+    <VStack flex={1} padding="5px 20px 0px 20px" h="full">
+      <InputGroup w="100%" maxW="400px" h="30px" alignItems="center">
+        <Input
+          placeholder="Tìm kiếm sản phẩm"
+          size="sm"
+          flex={1}
+          borderRadius="5px"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
+        <InputRightElement padding="0" h="100%" w="max-content">
+          <IconButton
+            size="xs"
+            height="30px"
+            width="30px"
+            onClick={() => {
+              if (!searchParams.has("keyword")) {
+                searchParams.append("keyword", keyword);
+              } else {
+                searchParams.set("keyword", keyword);
+              }
+              setSearchParams(searchParams);
+            }}
+          >
+            <HiOutlineMagnifyingGlass />
+          </IconButton>
+        </InputRightElement>
+      </InputGroup>
+      <Divider marginTop="5px" />
+      <HStack w="100%" marginTop="0 !important" flex={1}>
+        {navigation.map((item) => (
+          <Stack
+            key={item.value}
+            flex={1}
+            alignItems="center"
+            flexDir="row"
+            justifyContent="center"
+            position="relative"
+            h="100%"
+            _hover={{
+              cursor: "pointer",
+              " .line": {
+                width: "100%",
+                left: 0,
+                background: "#000",
+              },
+              " .menu": {
+                opacity: 1,
+                top: "100%",
+                zIndex: 101,
+              },
+            }}
+          >
+            <Popover trigger="hover">
+              <PopoverTrigger>
+                <Text textTransform="uppercase" fontSize="sm">
+                  {item?.label}
+                </Text>
+              </PopoverTrigger>
+              {!item.enable ? (
+                <PopoverContent>
+                  <PopoverBody>
+                    <Text
+                      textTransform="uppercase"
+                      fontSize="sm"
+                      padding="6px 10px"
+                    >
+                      Trang này vẫn đang phát triển. Vui lòng quay lại sau!
+                    </Text>
+                  </PopoverBody>
+                </PopoverContent>
+              ) : null}
+            </Popover>
+            <Box
+              className="line"
+              bottom="0"
+              height="2px"
+              left="50%"
+              position="absolute"
+              background="#fff"
+              transition="width 0.3s ease 0s, left 0.3s ease 0s"
+              width="0px"
+            />
+            {item.enable ? (
+              <Stack
+                position="absolute"
+                top="150%"
+                marginTop="0 !important"
+                background="#fff"
+                w="full"
+                h="auto"
+                opacity={0}
+                boxShadow="base"
+                className="menu"
+                transition="all ease 0.25s"
+                userSelect="none"
+                zIndex={-1}
+              >
+                {item?.child.map((childItem) => (
+                  <Link
+                    flex={1}
+                    alignItems="center"
+                    flexDir="row"
+                    justifyContent="center"
+                    position="relative"
+                    key={`child-${childItem.value}`}
+                    fontWeight={400}
+                    _hover={{
+                      cursor: "pointer",
+                      background: "#71bec2",
+                      color: "#fff",
+                    }}
+                    onClick={() => {
+                      searchParams.set("categoryCode", childItem.value);
+                      setSearchParams(searchParams);
+                    }}
+                  >
+                    <Text
+                      textTransform="uppercase"
+                      fontSize="sm"
+                      padding="6px 10px"
+                    >
+                      {childItem?.label}
+                    </Text>
+                  </Link>
+                ))}
+              </Stack>
+            ) : null}
+          </Stack>
+        ))}
+      </HStack>
+    </VStack>
+  );
+};
+
+const MobileNavbar = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [keyword, setKeyword] = React.useState("");
+  return (
+    <VStack flex={1} padding="5px 20px 0px 20px" h="full">
+      <InputGroup w="100%" maxW="400px" h="30px" alignItems="center">
+        <Input
+          placeholder="Tìm kiếm sản phẩm"
+          size="sm"
+          flex={1}
+          borderRadius="5px"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+        />
+        <InputRightElement padding="0" h="100%" w="max-content">
+          <IconButton
+            size="xs"
+            height="30px"
+            width="30px"
+            onClick={() => {
+              if (!searchParams.has("keyword")) {
+                searchParams.append("keyword", keyword);
+              } else {
+                searchParams.set("keyword", keyword);
+              }
+              setSearchParams(searchParams);
+            }}
+          >
+            <HiOutlineMagnifyingGlass />
+          </IconButton>
+        </InputRightElement>
+      </InputGroup>
+      <Divider margin="20px 0" />
+      <VStack w="100%" alignItems="flex-start" marginTop="0 !important">
+        {navigation.map((item) => (
+          <Stack
+            key={item.value}
+            flex={1}
+            alignItems="center"
+            flexDir="row"
+            justifyContent="center"
+            position="relative"
+            h="100%"
+            _hover={{
+              cursor: "pointer",
+              " .line": {
+                width: "100%",
+                left: 0,
+                background: "#000",
+              },
+              " .menu": {
+                opacity: 1,
+                top: "100%",
+                zIndex: 101,
+              },
+            }}
+          >
+            <Popover trigger="hover">
+              <PopoverTrigger>
+                <Text textTransform="uppercase" fontSize="sm">
+                  {item?.label}
+                </Text>
+              </PopoverTrigger>
+              {!item.enable ? (
+                <PopoverContent>
+                  <PopoverBody>
+                    <Text
+                      textTransform="uppercase"
+                      fontSize="sm"
+                      padding="6px 10px"
+                    >
+                      Trang này vẫn đang phát triển. Vui lòng quay lại sau!
+                    </Text>
+                  </PopoverBody>
+                </PopoverContent>
+              ) : null}
+            </Popover>
+            <Box
+              className="line"
+              bottom="0"
+              height="2px"
+              left="50%"
+              position="absolute"
+              background="#fff"
+              transition="width 0.3s ease 0s, left 0.3s ease 0s"
+              width="0px"
+            />
+            {item.enable ? (
+              <Stack
+                position="absolute"
+                top="150%"
+                marginTop="0 !important"
+                background="#fff"
+                w="160px"
+                left="0"
+                h="auto"
+                opacity={0}
+                boxShadow="base"
+                className="menu"
+                transition="all ease 0.25s"
+                userSelect="none"
+                zIndex={-1}
+              >
+                {item?.child.map((childItem) => (
+                  <Link
+                    flex={1}
+                    alignItems="center"
+                    flexDir="row"
+                    justifyContent="center"
+                    position="relative"
+                    key={`child-${childItem.value}`}
+                    fontWeight={400}
+                    _hover={{
+                      cursor: "pointer",
+                      background: "#71bec2",
+                      color: "#fff",
+                    }}
+                    onClick={() => {
+                      searchParams.set("categoryCode", childItem.value);
+                      setSearchParams(searchParams);
+                    }}
+                  >
+                    <Text
+                      textTransform="uppercase"
+                      fontSize="sm"
+                      padding="6px 10px"
+                    >
+                      {childItem?.label}
+                    </Text>
+                  </Link>
+                ))}
+              </Stack>
+            ) : null}
+          </Stack>
+        ))}
+      </VStack>
+    </VStack>
+  );
+};
+
 const Header = () => {
   const [isShowInvoice, setIsShowInvoice] = React.useState(false);
   const [isShowProfile, setIsShowProfile] = React.useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
   return (
-    <Box as="nav" boxShadow="base" h="60px" display="flex" alignItems="center">
+    <Box as="nav" boxShadow="base" h="80px" display="flex" alignItems="center">
       <UserInvoiceDetails
         isOpen={isShowInvoice}
         onClose={() => setIsShowInvoice(false)}
       />
       <Profile isOpen={isShowProfile} onClose={() => setIsShowProfile(false)} />
+
       <Container
-        maxW="880px"
+        maxW="1280px"
         display="flex"
         alignItems="center"
         justifyContent="space-between"
         padding="0 24px"
+        h="full"
       >
         <Image src={logo} alt="Logo" />
+        <Hide below="900px">
+          <Navbar display={["none", "none", "flex"]} />
+        </Hide>
         <HStack>
           <AccountButton onProfile={() => setIsShowProfile(true)} />
           <CartButton onInvoice={() => setIsShowInvoice(true)} />
+          <Show below="900px">
+            <Button
+              display="flex"
+              flexDirection="column"
+              variant="ghost"
+              h="auto"
+              p="5px"
+              ref={btnRef}
+              onClick={onOpen}
+            >
+              <HStack border="1px solid black" padding="3px" borderRadius="50%">
+                <Icon as={HiOutlineBars4} />
+              </HStack>
+              <Text fontSize="xs" mt="6px">
+                Menu
+              </Text>
+            </Button>
+          </Show>
         </HStack>
       </Container>
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerBody>
+            <MobileNavbar />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </Box>
   );
 };

@@ -17,7 +17,7 @@ const UserLayout = () => {
     <Box as="main" w="100vw" h="100vh" overflowX="hidden">
       <Header />
       <Container
-        maxW="880px"
+        maxW="1280px"
         minH="calc(100vh - 102px)"
         margin="0 auto"
         p="24px"

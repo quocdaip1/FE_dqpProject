@@ -52,11 +52,153 @@ const schema = yup
     material: yup.string().required("Chất liệu là trường bắt buộc!"),
     description: yup.string().required("Mô tả là trường bắt buộc!"),
     image: yup.string().required("Hình ảnh là trường bắt buộc!"),
-    subCategoryCode: yup
-      .string()
-      .required("Mã loại sản phâm là trường bắt buộc!"),
+    event: yup.string().required("Mã loại sản phâm là trường bắt buộc!"),
   })
   .required();
+
+const extraSubCategory = {
+  DC: {
+    label: "Kiểu dáng",
+    value: "style",
+    child: [
+      {
+        label: "Choker",
+        value: "choker",
+      },
+      {
+        label: "Chain Necklace",
+        value: "chainNecklace",
+      },
+
+      {
+        label: "Pendant Necklace",
+        value: "pendantNecklace",
+      },
+      {
+        label: "Statement Necklace",
+        value: "statementNecklace",
+      },
+      {
+        label: "Chain Layering",
+        value: "chainLayering",
+      },
+    ],
+  },
+  VT: {
+    label: "Kiểu dáng",
+    value: "style",
+    child: [
+      {
+        label: "Bangle",
+        value: "bangle",
+      },
+      {
+        label: "Chain Bracelet",
+        value: "chainBracelet",
+      },
+
+      {
+        label: "Charm Bracelet",
+        value: "charmBracelet",
+      },
+      {
+        label: "Bar Bracelet",
+        value: "barBracelet",
+      },
+      {
+        label: "Bracelet Stacking",
+        value: "braceletStacking",
+      },
+    ],
+  },
+  NH: {
+    label: "Kiểu dáng",
+    value: "style",
+    child: [
+      {
+        label: "Statement Ring",
+        value: "statementRing",
+      },
+      {
+        label: "Band Ring",
+        value: "bandRing",
+      },
+
+      {
+        label: "Chain Ring",
+        value: "chainRing",
+      },
+      {
+        label: "Dainty Ring",
+        value: "daintyRing",
+      },
+      {
+        label: "Ring Stacking",
+        value: "ringStacking",
+      },
+      {
+        label: "Signet Ring",
+        value: "signetRing",
+      },
+      {
+        label: "Braided Ring",
+        value: "braidedRing",
+      },
+    ],
+  },
+  HT: {
+    label: "Kiểu dáng",
+    value: "style",
+    child: [
+      {
+        label: "Studs",
+        value: "studs",
+      },
+      {
+        label: "Huggies",
+        value: "huggies",
+      },
+
+      {
+        label: "Hoops",
+        value: "hoops",
+      },
+      {
+        label: "Drops",
+        value: "drops",
+      },
+      {
+        label: "Dangles",
+        value: "dangles",
+      },
+      {
+        label: "Jacket Earrings",
+        value: "jacketErrings",
+      },
+      {
+        label: "Ear Cuffs",
+        value: "earCuffs",
+      },
+
+      {
+        label: "Statement Earrings",
+        value: "statementEarrings",
+      },
+      {
+        label: "Ear Stacking",
+        value: "earStacking",
+      },
+      {
+        label: "Climber Earings",
+        value: "climberEarings",
+      },
+      {
+        label: "Cuff Earings",
+        value: "cuffEarings",
+      },
+    ],
+  },
+};
 
 const Alert = (payload) => {
   const cancelRef = React.useRef();
@@ -104,9 +246,12 @@ const AdminProductDetails = (payload) => {
     formState: { errors },
     reset,
     setValue,
+    getValues,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const watchCategory = watch("categoryCode");
 
   React.useEffect(() => {
     if (!payload.isOpen) reset();
@@ -122,6 +267,7 @@ const AdminProductDetails = (payload) => {
       setValue("material", payload.product.material);
       setValue("description", payload.product.description);
       setValue("image", payload.product.image);
+      setValue("event", payload.product.event);
     }
   }, [payload.isOpen, reset, payload.product, setValue]);
 
@@ -153,8 +299,11 @@ const AdminProductDetails = (payload) => {
 
   const onSubmit = async (data) => {
     let response;
-    if (payload.product) response = await updateProduct(data);
-    else response = await createProduct(data);
+    const { category, event } = data;
+    const subCategoryCode = `${category}-${event}`;
+    if (payload.product)
+      response = await updateProduct({ ...data, subCategoryCode });
+    else response = await createProduct({ ...data, subCategoryCode });
 
     const { status, message } = response.data;
 
@@ -192,6 +341,20 @@ const AdminProductDetails = (payload) => {
     }
     onClose();
   };
+
+  const eventOptions = React.useMemo(() => {
+    const resolveElement = [];
+    const categoryCode = getValues("categoryCode");
+
+    if (categoryCode) {
+      const extraSub = extraSubCategory[categoryCode];
+      if (extraSub)
+        extraSub.child.forEach((item) =>
+          resolveElement.push(<option value={item.value}>{item.label}</option>)
+        );
+    }
+    return <>{resolveElement}</>;
+  }, [watchCategory]);
 
   return (
     <>
@@ -274,12 +437,23 @@ const AdminProductDetails = (payload) => {
                 isRequired
                 isInvalid={Boolean(errors.subCategoryCode?.message)}
               >
-                <FormLabel>Mã loại sản phẩm</FormLabel>
+                <FormLabel>Kiểu dáng</FormLabel>
                 <Controller
-                  name="subCategoryCode"
+                  name="event"
                   control={control}
                   render={({ field }) => (
-                    <Input placeholder="VT025" {...field} required={false} />
+                    <Select
+                      placeholder="Loại"
+                      {...field}
+                      required={false}
+                      isDisabled={!getValues("categoryCode")}
+                    >
+                      {eventOptions}
+                      <option value="DC">Dây chuyền (DC) </option>
+                      <option value="VT">Vòng tay (VT)</option>
+                      <option value="NH">Nhẫn (NH)</option>
+                      <option value="HT">Hoa tai (HT)</option>
+                    </Select>
                   )}
                 />
                 {errors.subCategoryCode?.message ? (
@@ -297,9 +471,9 @@ const AdminProductDetails = (payload) => {
                   control={control}
                   render={({ field }) => (
                     <Select placeholder="Kích cỡ" {...field} required={false}>
-                      <option value="sm">Nhỏ</option>
-                      <option value="md">Trung</option>
-                      <option value="lg">Lớn</option>
+                      <option value="small">Nhỏ</option>
+                      <option value="medium">Trung</option>
+                      <option value="large">Lớn</option>
                     </Select>
                   )}
                 />
