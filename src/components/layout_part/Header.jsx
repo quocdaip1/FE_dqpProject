@@ -62,6 +62,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCart, setCart } from "../../cartSlice";
 import UserInvoiceDetails from "../popup/UserInvoiceDetails";
 import { useSearchParams } from "react-router-dom";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from "@chakra-ui/react";
 
 const navigation = [
   {
@@ -78,21 +85,146 @@ const navigation = [
         label: "Dây chuyền",
         value: "DC",
         enable: true,
+        subCategoryCode: [
+          {
+            label: "Choker",
+            value: "DC_choker",
+          },
+          {
+            label: "Chain Necklace",
+            value: "DC_chainNecklace",
+          },
+
+          {
+            label: "Pendant Necklace",
+            value: "DC_pendantNecklace",
+          },
+          {
+            label: "Statement Necklace",
+            value: "DC_statementNecklace",
+          },
+          {
+            label: "Chain Layering",
+            value: "DC_chainLayering",
+          },
+        ],
       },
       {
         label: "Vòng tay",
         value: "VT",
         enable: true,
+        subCategoryCode: [
+          {
+            label: "Bangle",
+            value: "VT_bangle",
+          },
+          {
+            label: "Chain Bracelet",
+            value: "VT_chainBracelet",
+          },
+
+          {
+            label: "Charm Bracelet",
+            value: "VT_charmBracelet",
+          },
+          {
+            label: "Bar Bracelet",
+            value: "VT_barBracelet",
+          },
+          {
+            label: "Bracelet Stacking",
+            value: "VT_braceletStacking",
+          },
+        ],
       },
       {
         label: "Nhẫn",
         value: "NH",
         enable: true,
+        subCategoryCode: [
+          {
+            label: "Statement Ring",
+            value: "NH_statementRing",
+          },
+          {
+            label: "Band Ring",
+            value: "NH_bandRing",
+          },
+
+          {
+            label: "Chain Ring",
+            value: "NH_chainRing",
+          },
+          {
+            label: "Dainty Ring",
+            value: "NH_daintyRing",
+          },
+          {
+            label: "Ring Stacking",
+            value: "NH_ringStacking",
+          },
+          {
+            label: "Signet Ring",
+            value: "NH_signetRing",
+          },
+          {
+            label: "Braided Ring",
+            value: "NH_braidedRing",
+          },
+        ],
       },
       {
         label: "Hoa tai",
         value: "HT",
         enable: true,
+        subCategoryCode: [
+          {
+            label: "Studs",
+            value: "HT_studs",
+          },
+          {
+            label: "Huggies",
+            value: "HT_huggies",
+          },
+
+          {
+            label: "Hoops",
+            value: "HT_hoops",
+          },
+          {
+            label: "Drops",
+            value: "HT_drops",
+          },
+          {
+            label: "Dangles",
+            value: "HT_dangles",
+          },
+          {
+            label: "Jacket Earrings",
+            value: "HT_jacketErrings",
+          },
+          {
+            label: "Ear Cuffs",
+            value: "HT_earCuffs",
+          },
+
+          {
+            label: "Statement Earrings",
+            value: "HT_statementEarrings",
+          },
+          {
+            label: "Ear Stacking",
+            value: "HT_earStacking",
+          },
+          {
+            label: "Climber Earings",
+            value: "HT_climberEarings",
+          },
+          {
+            label: "Cuff Earings",
+            value: "HT_cuffEarings",
+          },
+        ],
       },
     ],
   },
@@ -571,11 +703,23 @@ const Navbar = () => {
                     key={`child-${childItem.value}`}
                     fontWeight={400}
                     _hover={{
-                      cursor: "pointer",
-                      background: "#71bec2",
-                      color: "#fff",
+                      " .child_label": {
+                        background: "#71bec2",
+                        color: "#fff",
+                        cursor: "pointer",
+                      },
+
+                      " .sub_menu": {
+                        opacity: 1,
+                        top: "0",
+                        zIndex: 101,
+                      },
                     }}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (searchParams.has("subCategoryCode")) {
+                        searchParams.delete("subCategoryCode");
+                      }
                       searchParams.set("categoryCode", childItem.value);
                       setSearchParams(searchParams);
                     }}
@@ -584,9 +728,60 @@ const Navbar = () => {
                       textTransform="uppercase"
                       fontSize="sm"
                       padding="6px 10px"
+                      className="child_label"
                     >
                       {childItem?.label}
                     </Text>
+                    <Stack
+                      position="absolute"
+                      top="100%"
+                      marginTop="0 !important"
+                      background="#fff"
+                      w="160px"
+                      left="100%"
+                      h="auto"
+                      opacity={0}
+                      boxShadow="base"
+                      className="sub_menu"
+                      transition="all ease 0.25s"
+                      userSelect="none"
+                      zIndex={-1}
+                    >
+                      {childItem?.subCategoryCode.map((subCategoryCode) => (
+                        <Link
+                          flex={1}
+                          alignItems="center"
+                          flexDir="row"
+                          justifyContent="center"
+                          position="relative"
+                          key={`child-subcategory-${subCategoryCode.value}`}
+                          fontWeight={400}
+                          color="black"
+                          _hover={{
+                            cursor: "pointer",
+                            background: "#71bec2",
+                            color: "#fff",
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            searchParams.set("categoryCode", childItem.value);
+                            searchParams.set(
+                              "subCategoryCode",
+                              subCategoryCode.value
+                            );
+                            setSearchParams(searchParams);
+                          }}
+                        >
+                          <Text
+                            textTransform="uppercase"
+                            fontSize="sm"
+                            padding="6px 10px"
+                          >
+                            {subCategoryCode?.label}
+                          </Text>
+                        </Link>
+                      ))}
+                    </Stack>
                   </Link>
                 ))}
               </Stack>
@@ -602,7 +797,7 @@ const MobileNavbar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [keyword, setKeyword] = React.useState("");
   return (
-    <VStack flex={1} padding="5px 20px 0px 20px" h="full">
+    <VStack flex={1} padding="5px 5px 0px 5px" h="full" alignItems="flex-start">
       <InputGroup w="100%" maxW="400px" h="30px" alignItems="center">
         <Input
           placeholder="Tìm kiếm sản phẩm"
@@ -631,109 +826,136 @@ const MobileNavbar = () => {
         </InputRightElement>
       </InputGroup>
       <Divider margin="20px 0" />
-      <VStack w="100%" alignItems="flex-start" marginTop="0 !important">
+      <Accordion allowToggle w="full">
         {navigation.map((item) => (
-          <Stack
+          <AccordionItem
             key={item.value}
             flex={1}
             alignItems="center"
             flexDir="row"
             justifyContent="center"
             position="relative"
-            h="100%"
             _hover={{
               cursor: "pointer",
-              " .line": {
-                width: "100%",
-                left: 0,
-                background: "#000",
-              },
-              " .menu": {
-                opacity: 1,
-                top: "100%",
-                zIndex: 101,
-              },
             }}
           >
             <Popover trigger="hover">
               <PopoverTrigger>
-                <Text textTransform="uppercase" fontSize="sm">
+                <AccordionButton
+                  textTransform="uppercase"
+                  fontSize="sm"
+                  justifyContent="space-between"
+                >
                   {item?.label}
-                </Text>
+                  {item.enable ? <AccordionIcon /> : null}
+                </AccordionButton>
               </PopoverTrigger>
               {!item.enable ? (
                 <PopoverContent>
                   <PopoverBody>
-                    <Text
-                      textTransform="uppercase"
-                      fontSize="sm"
-                      padding="6px 10px"
-                    >
+                    <Text textTransform="uppercase" fontSize="sm">
                       Trang này vẫn đang phát triển. Vui lòng quay lại sau!
                     </Text>
                   </PopoverBody>
                 </PopoverContent>
               ) : null}
             </Popover>
-            <Box
-              className="line"
-              bottom="0"
-              height="2px"
-              left="50%"
-              position="absolute"
-              background="#fff"
-              transition="width 0.3s ease 0s, left 0.3s ease 0s"
-              width="0px"
-            />
-            {item.enable ? (
-              <Stack
-                position="absolute"
-                top="150%"
-                marginTop="0 !important"
-                background="#fff"
-                w="160px"
-                left="0"
-                h="auto"
-                opacity={0}
-                boxShadow="base"
-                className="menu"
-                transition="all ease 0.25s"
-                userSelect="none"
-                zIndex={-1}
-              >
-                {item?.child.map((childItem) => (
-                  <Link
-                    flex={1}
-                    alignItems="center"
-                    flexDir="row"
-                    justifyContent="center"
-                    position="relative"
-                    key={`child-${childItem.value}`}
-                    fontWeight={400}
-                    _hover={{
-                      cursor: "pointer",
-                      background: "#71bec2",
-                      color: "#fff",
-                    }}
-                    onClick={() => {
-                      searchParams.set("categoryCode", childItem.value);
-                      setSearchParams(searchParams);
-                    }}
-                  >
-                    <Text
-                      textTransform="uppercase"
-                      fontSize="sm"
-                      padding="6px 10px"
-                    >
-                      {childItem?.label}
-                    </Text>
-                  </Link>
-                ))}
-              </Stack>
-            ) : null}
-          </Stack>
+            <AccordionPanel>
+              {item.enable ? (
+                <Accordion
+                  marginTop="0 !important"
+                  background="#fff"
+                  boxShadow="base"
+                  className="menu"
+                  transition="all ease 0.25s"
+                  userSelect="none"
+                  allowToggle
+                >
+                  {item?.child.map((childItem) => (
+                    <AccordionItem key={`child-${childItem.value}`}>
+                      <Link
+                        flex={1}
+                        alignItems="center"
+                        flexDir="row"
+                        justifyContent="center"
+                        position="relative"
+                        fontWeight={400}
+                        _hover={{
+                          cursor: "pointer",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (searchParams.has("subCategoryCode")) {
+                            searchParams.delete("subCategoryCode");
+                          }
+                          searchParams.set("categoryCode", childItem.value);
+                          setSearchParams(searchParams);
+                        }}
+                      >
+                        <AccordionButton
+                          textTransform="uppercase"
+                          fontSize="sm"
+                          justifyContent="space-between"
+                        >
+                          {childItem?.label}
+                          {item.enable ? <AccordionIcon /> : null}
+                        </AccordionButton>
+                      </Link>
+                      <AccordionPanel>
+                        <Accordion
+                          marginTop="0 !important"
+                          background="#fff"
+                          boxShadow="base"
+                          className="sub_menu"
+                          transition="all ease 0.25s"
+                          userSelect="none"
+                          allowToggle
+                        >
+                          {childItem?.subCategoryCode.map((subCategoryCode) => (
+                            <AccordionItem
+                              key={`child-subcategory-${subCategoryCode.value}`}
+                            >
+                              <Link
+                                flex={1}
+                                alignItems="center"
+                                flexDir="row"
+                                justifyContent="center"
+                                position="relative"
+                                fontWeight={400}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  searchParams.set(
+                                    "categoryCode",
+                                    childItem.value
+                                  );
+                                  searchParams.set(
+                                    "subCategoryCode",
+                                    subCategoryCode.value
+                                  );
+                                  setSearchParams(searchParams);
+                                }}
+                              >
+                                <AccordionButton
+                                  textTransform="uppercase"
+                                  fontSize="sm"
+                                  textAlign="left"
+                                  justifyContent="space-between"
+                                >
+                                  {subCategoryCode?.label}
+                                </AccordionButton>
+                              </Link>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
+                      </AccordionPanel>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              ) : null}
+            </AccordionPanel>
+          </AccordionItem>
         ))}
-      </VStack>
+      </Accordion>
     </VStack>
   );
 };
