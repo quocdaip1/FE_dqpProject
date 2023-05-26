@@ -16,6 +16,7 @@ import {
   WrapItem,
   Wrap,
   IconButton,
+  Center,
 } from "@chakra-ui/react";
 import { Pagination } from "../../components/common";
 import React from "react";
@@ -170,41 +171,41 @@ const ProductList = () => {
           <Table variant="striped" size="sm">
             <Thead>
               <Tr>
-                <Th>Tên SP</Th>
-                <Th>S.Lượng</Th>
+                <Th>Tên sản phẩm</Th>
+                <Th>Số lượng</Th>
                 <Th>Loại</Th>
-                <Th>K.Cỡ</Th>
-                <Th>Đ.Giá</Th>
-                <Th>T.Thái</Th>
-                <Th>H.Động</Th>
+                <Th>Kích cỡ</Th>
+                <Th>Đơn giá</Th>
+                <Th>Trạng thái</Th>
+                <Th textAlign="center">Hành động</Th>
               </Tr>
             </Thead>
             <Tbody>
               {payload.length > 0 ? (
                 payload.map((item, index) => (
                   <Tr key={`row-${index}`}>
-                    <Td>{item.name}</Td>
-                    <Td>{item.quantity}</Td>
-                    <Td>
+                    <Td fontWeight={500}>{item.name}</Td>
+                    <Td fontWeight={500}>{item.quantity}</Td>
+                    <Td fontWeight={500}>
                       {
                         categoryOptions.find(
                           (option) => option.value === item.categoryCode
                         )?.label
                       }
                     </Td>
-                    <Td>
+                    <Td fontWeight={500}>
                       {
                         sizeOptions.find((option) => option.value === item.size)
                           ?.label
                       }
                     </Td>
-                    <Td>
+                    <Td fontWeight={500}>
                       {item.price.toLocaleString("vi-VI", {
                         style: "currency",
                         currency: "VND",
                       })}
                     </Td>
-                    <Td>
+                    <Td fontWeight={500}>
                       {
                         statusOptions.find(
                           (option) => option.value === item.status
@@ -213,14 +214,16 @@ const ProductList = () => {
                     </Td>
 
                     <Td>
-                      <IconButton
-                        onClick={() => {
-                          setProduct(item);
-                          setIsShowPopup(true);
-                        }}
-                      >
-                        <HiOutlineEye />
-                      </IconButton>
+                      <Center>
+                        <IconButton
+                          onClick={() => {
+                            setProduct(item);
+                            setIsShowPopup(true);
+                          }}
+                        >
+                          <HiOutlineEye />
+                        </IconButton>
+                      </Center>
                     </Td>
                   </Tr>
                 ))

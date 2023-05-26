@@ -19,6 +19,44 @@ import { useSearchParams } from "react-router-dom";
 
 const subCategory = [
   {
+    label: "Khoảng giá",
+    value: "price",
+    child: [
+      {
+        label: "Dưới 500.000đ",
+        value: "0,500000",
+      },
+      {
+        label: "Từ 500.000đ - 1 triệu",
+        value: "500000,1000000",
+      },
+      {
+        label: "Từ 1 triệu - 1.500.000đ",
+        value: "1000000,1500000",
+      },
+      {
+        label: "Từ 1.500.000đ - 2 triệu",
+        value: "1500000,2000000",
+      },
+      {
+        label: "Từ 2 triệu - 3 triệu",
+        value: "2000000,3000000",
+      },
+      {
+        label: "Từ 3 triệu - 5 triệu",
+        value: "3000000,5000000",
+      },
+      {
+        label: "Từ 5 triệu - 10 triệu",
+        value: "5000000,10000000",
+      },
+      {
+        label: "Trên 10 triệu",
+        value: "10000000,1000000000",
+      },
+    ],
+  },
+  {
     label: "Chất liệu",
     value: "material",
     child: [
@@ -82,151 +120,34 @@ const subCategory = [
       },
     ],
   },
+  {
+    label: "Dịp sử dụng",
+    value: "event",
+    child: [
+      {
+        label: "Everyday",
+        value: "Every day",
+      },
+      {
+        label: "Date night",
+        value: "Date night",
+      },
+
+      {
+        label: "Event",
+        value: "Event",
+      },
+      {
+        label: "Resort",
+        value: "Resort",
+      },
+      {
+        label: "Gifts",
+        value: "gifts",
+      },
+    ],
+  },
 ];
-
-const extraSubCategory = {
-  DC: {
-    label: "Kiểu dáng",
-    value: "event",
-    child: [
-      {
-        label: "Choker",
-        value: "choker",
-      },
-      {
-        label: "Chain Necklace",
-        value: "chainNecklace",
-      },
-
-      {
-        label: "Pendant Necklace",
-        value: "pendantNecklace",
-      },
-      {
-        label: "Statement Necklace",
-        value: "statementNecklace",
-      },
-      {
-        label: "Chain Layering",
-        value: "chainLayering",
-      },
-    ],
-  },
-  VT: {
-    label: "Kiểu dáng",
-    value: "event",
-    child: [
-      {
-        label: "Bangle",
-        value: "bangle",
-      },
-      {
-        label: "Chain Bracelet",
-        value: "chainBracelet",
-      },
-
-      {
-        label: "Charm Bracelet",
-        value: "charmBracelet",
-      },
-      {
-        label: "Bar Bracelet",
-        value: "barBracelet",
-      },
-      {
-        label: "Bracelet Stacking",
-        value: "braceletStacking",
-      },
-    ],
-  },
-  NH: {
-    label: "Kiểu dáng",
-    value: "event",
-    child: [
-      {
-        label: "Statement Ring",
-        value: "statementRing",
-      },
-      {
-        label: "Band Ring",
-        value: "bandRing",
-      },
-
-      {
-        label: "Chain Ring",
-        value: "chainRing",
-      },
-      {
-        label: "Dainty Ring",
-        value: "daintyRing",
-      },
-      {
-        label: "Ring Stacking",
-        value: "ringStacking",
-      },
-      {
-        label: "Signet Ring",
-        value: "signetRing",
-      },
-      {
-        label: "Braided Ring",
-        value: "braidedRing",
-      },
-    ],
-  },
-  HT: {
-    label: "Kiểu dáng",
-    value: "event",
-    child: [
-      {
-        label: "Studs",
-        value: "studs",
-      },
-      {
-        label: "Huggies",
-        value: "huggies",
-      },
-
-      {
-        label: "Hoops",
-        value: "hoops",
-      },
-      {
-        label: "Drops",
-        value: "drops",
-      },
-      {
-        label: "Dangles",
-        value: "dangles",
-      },
-      {
-        label: "Jacket Earrings",
-        value: "jacketErrings",
-      },
-      {
-        label: "Ear Cuffs",
-        value: "earCuffs",
-      },
-
-      {
-        label: "Statement Earrings",
-        value: "statementEarrings",
-      },
-      {
-        label: "Ear Stacking",
-        value: "earStacking",
-      },
-      {
-        label: "Climber Earings",
-        value: "climberEarings",
-      },
-      {
-        label: "Cuff Earings",
-        value: "cuffEarings",
-      },
-    ],
-  },
-};
 
 const categoryOptions = [
   {
@@ -266,15 +187,25 @@ const Home = () => {
     style: "",
     material: "",
     categoryCode: "",
+    subCategoryCode: "",
   });
 
   const fetchProduct = async (page, filterParams) => {
+    const resolvePrice = {};
+    if (filterParams.price) {
+      const splitPrice = filterParams.price.split(",");
+      Object.assign(resolvePrice, {
+        priceFrom: splitPrice[0],
+        priceTo: splitPrice[1],
+      });
+    }
     const response = await axios.get("http://localhost:8080/api/products", {
       params: {
         keyword: "",
         page,
         limit: 10,
         ...filterParams,
+        ...resolvePrice,
       },
     });
     const { items, meta } = response.data.payload;
@@ -289,14 +220,18 @@ const Home = () => {
   React.useEffect(() => {
     const keyword = searchParams.get("keyword") || "";
     const categoryCode = searchParams.get("categoryCode") || "";
+    const subCategoryCode = searchParams.get("subCategoryCode") || "";
     const includesCategoryCode = ["DC", "VT", "NH", "HT"].includes(
       categoryCode
     );
+    if (searchParams.has("subCategoryCode")) {
+      searchParams.delete("subCategoryCode");
+    }
     if (!categoryCode || !includesCategoryCode) {
       searchParams.set("categoryCode", "DC");
       setSearchParams(searchParams);
     }
-    const newFilter = { ...filter, keyword, categoryCode };
+    const newFilter = { ...filter, keyword, categoryCode, subCategoryCode };
 
     setFilter(newFilter);
     fetchProduct(1, newFilter);
@@ -310,19 +245,6 @@ const Home = () => {
     setFilter(newFilter);
     fetchProduct(1, newFilter);
   };
-
-  const resolveSubCategory = React.useMemo(() => {
-    const categoryCode =
-      (searchParams.get("categoryCode") && searchParams.get("categoryCode")) ||
-      "DC";
-    const resolveCategoryCode = ["DC", "VT", "NH", "HT"].includes(categoryCode)
-      ? categoryCode
-      : "DC";
-    const result = [...subCategory];
-    const findExtraSubCategory = extraSubCategory[resolveCategoryCode];
-    result.push(findExtraSubCategory);
-    return result;
-  }, [searchParams]);
 
   const _renderProduct = () =>
     payload.map((item) => (
@@ -397,7 +319,7 @@ const Home = () => {
               boxShadow="base"
               padding="15px"
             >
-              {resolveSubCategory.map((sub, index) => (
+              {subCategory.map((sub, index) => (
                 <React.Fragment key={`sub-${sub.value}-${index}`}>
                   <Stack direction="column" minWidth="280px">
                     <Text
