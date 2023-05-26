@@ -50,9 +50,7 @@ const schema = yup
       .typeError("Số lượng chưa đúng định dạng số")
       .required("Giá là trường bắt buộc!"),
     material: yup.string().required("Chất liệu là trường bắt buộc!"),
-    description: yup.string().required("Mô tả là trường bắt buộc!"),
     image: yup.string().required("Hình ảnh là trường bắt buộc!"),
-    event: yup.string().required("Mã loại sản phâm là trường bắt buộc!"),
   })
   .required();
 
@@ -63,24 +61,24 @@ const extraSubCategory = {
     child: [
       {
         label: "Choker",
-        value: "choker",
+        value: "DC01",
       },
       {
         label: "Chain Necklace",
-        value: "chainNecklace",
+        value: "DC02",
       },
 
       {
         label: "Pendant Necklace",
-        value: "pendantNecklace",
+        value: "DC03",
       },
       {
         label: "Statement Necklace",
-        value: "statementNecklace",
+        value: "DC04",
       },
       {
         label: "Chain Layering",
-        value: "chainLayering",
+        value: "DC05",
       },
     ],
   },
@@ -90,24 +88,24 @@ const extraSubCategory = {
     child: [
       {
         label: "Bangle",
-        value: "bangle",
+        value: "VT01",
       },
       {
         label: "Chain Bracelet",
-        value: "chainBracelet",
+        value: "VT02",
       },
 
       {
         label: "Charm Bracelet",
-        value: "charmBracelet",
+        value: "VT03",
       },
       {
         label: "Bar Bracelet",
-        value: "barBracelet",
+        value: "VT04",
       },
       {
         label: "Bracelet Stacking",
-        value: "braceletStacking",
+        value: "VT05",
       },
     ],
   },
@@ -117,32 +115,32 @@ const extraSubCategory = {
     child: [
       {
         label: "Statement Ring",
-        value: "statementRing",
+        value: "NH01",
       },
       {
         label: "Band Ring",
-        value: "bandRing",
+        value: "NH02",
       },
 
       {
         label: "Chain Ring",
-        value: "chainRing",
+        value: "NH03",
       },
       {
         label: "Dainty Ring",
-        value: "daintyRing",
+        value: "NH04",
       },
       {
         label: "Ring Stacking",
-        value: "ringStacking",
+        value: "NH05",
       },
       {
         label: "Signet Ring",
-        value: "signetRing",
+        value: "NH06",
       },
       {
         label: "Braided Ring",
-        value: "braidedRing",
+        value: "NH07",
       },
     ],
   },
@@ -152,49 +150,49 @@ const extraSubCategory = {
     child: [
       {
         label: "Studs",
-        value: "studs",
+        value: "HT01",
       },
       {
         label: "Huggies",
-        value: "huggies",
+        value: "HT02",
       },
 
       {
         label: "Hoops",
-        value: "hoops",
+        value: "HT03",
       },
       {
         label: "Drops",
-        value: "drops",
+        value: "HT04",
       },
       {
         label: "Dangles",
-        value: "dangles",
+        value: "HT05",
       },
       {
         label: "Jacket Earrings",
-        value: "jacketErrings",
+        value: "HT06",
       },
       {
         label: "Ear Cuffs",
-        value: "earCuffs",
+        value: "HT07",
       },
 
       {
         label: "Statement Earrings",
-        value: "statementEarrings",
+        value: "HT08",
       },
       {
         label: "Ear Stacking",
-        value: "earStacking",
+        value: "HT09",
       },
       {
         label: "Climber Earings",
-        value: "climberEarings",
+        value: "HT010",
       },
       {
         label: "Cuff Earings",
-        value: "cuffEarings",
+        value: "HT11",
       },
     ],
   },
@@ -299,11 +297,16 @@ const AdminProductDetails = (payload) => {
 
   const onSubmit = async (data) => {
     let response;
-    const { category, event } = data;
-    const subCategoryCode = `${category}-${event}`;
-    if (payload.product)
-      response = await updateProduct({ ...data, subCategoryCode });
-    else response = await createProduct({ ...data, subCategoryCode });
+    if (payload.product) response = await updateProduct({ ...data });
+    else
+      response = await createProduct({ ...data }).catch((e) =>
+        toast({
+          title: e.response.data.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      );
 
     const { status, message } = response.data;
 
@@ -371,7 +374,6 @@ const AdminProductDetails = (payload) => {
           <ModalBody pb={6}>
             <FormControl isRequired isInvalid={Boolean(errors.name?.message)}>
               <FormLabel>Tên sản phẩm</FormLabel>
-
               <Controller
                 name="name"
                 control={control}
@@ -400,6 +402,7 @@ const AdminProductDetails = (payload) => {
                   <Select placeholder="Trạng thái" {...field} required={false}>
                     <option value="active">Hoạt động </option>
                     <option value="inactive">Không hoạt động</option>
+                    <option value="outOfStock">Hết hàng</option>
                   </Select>
                 )}
               />
@@ -439,20 +442,16 @@ const AdminProductDetails = (payload) => {
               >
                 <FormLabel>Kiểu dáng</FormLabel>
                 <Controller
-                  name="event"
+                  name="subCategoryCode"
                   control={control}
                   render={({ field }) => (
                     <Select
-                      placeholder="Loại"
+                      placeholder="Kiểu dáng"
                       {...field}
                       required={false}
                       isDisabled={!getValues("categoryCode")}
                     >
                       {eventOptions}
-                      <option value="DC">Dây chuyền (DC) </option>
-                      <option value="VT">Vòng tay (VT)</option>
-                      <option value="NH">Nhẫn (NH)</option>
-                      <option value="HT">Hoa tai (HT)</option>
                     </Select>
                   )}
                 />
@@ -515,7 +514,6 @@ const AdminProductDetails = (payload) => {
               mt={4}
             >
               <FormLabel>Chất liệu chính</FormLabel>
-
               <Controller
                 name="material"
                 control={control}
@@ -582,7 +580,6 @@ const AdminProductDetails = (payload) => {
                 isInvalid={Boolean(errors.quantity?.message)}
               >
                 <FormLabel>Số lượng</FormLabel>
-
                 <Controller
                   name="quantity"
                   control={control}
@@ -609,13 +606,30 @@ const AdminProductDetails = (payload) => {
                 ) : null}
               </FormControl>
             </Stack>
+            <FormControl isInvalid={Boolean(errors.event?.message)} mt={4}>
+              <FormLabel>Dịp sử dụng</FormLabel>
+              <Controller
+                name="event"
+                control={control}
+                render={({ field }) => (
+                  <Select placeholder="Dịp sử dụng" {...field} required={false}>
+                    <option value="Every day">Every day</option>
+                    <option value="Date night">Date night</option>
+                    <option value="Event">Event</option>
+                    <option value="Resort">Resort</option>
+                    <option value="gifts">Gifts</option>
+                  </Select>
+                )}
+              />
+              {errors.event?.message ? (
+                <FormErrorMessage>{errors.event?.message}</FormErrorMessage>
+              ) : null}
+            </FormControl>
             <FormControl
               mt={4}
-              isRequired
               isInvalid={Boolean(errors.description?.message)}
             >
               <FormLabel>Mô tả</FormLabel>
-
               <Controller
                 name="description"
                 control={control}

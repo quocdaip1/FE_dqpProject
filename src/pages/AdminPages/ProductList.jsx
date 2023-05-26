@@ -66,6 +66,10 @@ const statusOptions = [
     label: "Không hoạt động",
     value: "inactive",
   },
+  {
+    label: "Hết hàng",
+    value: "outOfStock",
+  },
 ];
 
 const ProductList = () => {
