@@ -88,24 +88,24 @@ const navigation = [
         subCategoryCode: [
           {
             label: "Choker",
-            value: "DC_choker",
+            value: "DC01",
           },
           {
             label: "Chain Necklace",
-            value: "DC_chainNecklace",
+            value: "DC02",
           },
 
           {
             label: "Pendant Necklace",
-            value: "DC_pendantNecklace",
+            value: "DC03",
           },
           {
             label: "Statement Necklace",
-            value: "DC_statementNecklace",
+            value: "DC04",
           },
           {
             label: "Chain Layering",
-            value: "DC_chainLayering",
+            value: "DC05",
           },
         ],
       },
@@ -116,24 +116,24 @@ const navigation = [
         subCategoryCode: [
           {
             label: "Bangle",
-            value: "VT_bangle",
+            value: "VT01",
           },
           {
             label: "Chain Bracelet",
-            value: "VT_chainBracelet",
+            value: "VT02",
           },
 
           {
             label: "Charm Bracelet",
-            value: "VT_charmBracelet",
+            value: "VT03",
           },
           {
             label: "Bar Bracelet",
-            value: "VT_barBracelet",
+            value: "VT04",
           },
           {
             label: "Bracelet Stacking",
-            value: "VT_braceletStacking",
+            value: "VT05",
           },
         ],
       },
@@ -144,32 +144,32 @@ const navigation = [
         subCategoryCode: [
           {
             label: "Statement Ring",
-            value: "NH_statementRing",
+            value: "NH01",
           },
           {
             label: "Band Ring",
-            value: "NH_bandRing",
+            value: "NH02",
           },
 
           {
             label: "Chain Ring",
-            value: "NH_chainRing",
+            value: "NH03",
           },
           {
             label: "Dainty Ring",
-            value: "NH_daintyRing",
+            value: "NH04",
           },
           {
             label: "Ring Stacking",
-            value: "NH_ringStacking",
+            value: "NH05",
           },
           {
             label: "Signet Ring",
-            value: "NH_signetRing",
+            value: "NH06",
           },
           {
             label: "Braided Ring",
-            value: "NH_braidedRing",
+            value: "NH07",
           },
         ],
       },
@@ -180,49 +180,49 @@ const navigation = [
         subCategoryCode: [
           {
             label: "Studs",
-            value: "HT_studs",
+            value: "HT01",
           },
           {
             label: "Huggies",
-            value: "HT_huggies",
+            value: "HT02",
           },
 
           {
             label: "Hoops",
-            value: "HT_hoops",
+            value: "HT03",
           },
           {
             label: "Drops",
-            value: "HT_drops",
+            value: "HT04",
           },
           {
             label: "Dangles",
-            value: "HT_dangles",
+            value: "HT05",
           },
           {
             label: "Jacket Earrings",
-            value: "HT_jacketErrings",
+            value: "HT06",
           },
           {
             label: "Ear Cuffs",
-            value: "HT_earCuffs",
+            value: "HT07",
           },
 
           {
             label: "Statement Earrings",
-            value: "HT_statementEarrings",
+            value: "HT08",
           },
           {
             label: "Ear Stacking",
-            value: "HT_earStacking",
+            value: "HT09",
           },
           {
             label: "Climber Earings",
-            value: "HT_climberEarings",
+            value: "HT10",
           },
           {
             label: "Cuff Earings",
-            value: "HT_cuffEarings",
+            value: "HT11",
           },
         ],
       },

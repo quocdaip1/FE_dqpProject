@@ -188,7 +188,7 @@ const extraSubCategory = {
       },
       {
         label: "Climber Earings",
-        value: "HT010",
+        value: "HT10",
       },
       {
         label: "Cuff Earings",

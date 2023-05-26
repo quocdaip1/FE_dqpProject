@@ -42,11 +42,13 @@ const SignIn = (payload) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
   const onSubmit = async (data) => {
     axios
       .post("http://localhost:8080/api/auth/signin", data)
       .then((response) => {
         if (response.status === 200) {
+          console.log(response);
           const { accessToken, user } = response.data.payload;
           setUserData(user);
           setToken(accessToken);
@@ -56,7 +58,7 @@ const SignIn = (payload) => {
       })
       .catch((e) => {
         toast({
-          title: e.response.data.message,
+          title: e.message,
           status: "error",
           duration: 3000,
           isClosable: true,

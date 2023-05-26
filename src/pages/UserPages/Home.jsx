@@ -120,6 +120,33 @@ const subCategory = [
       },
     ],
   },
+  {
+    label: "Dịp sử dụng",
+    value: "event",
+    child: [
+      {
+        label: "Everyday",
+        value: "Every day",
+      },
+      {
+        label: "Date night",
+        value: "Date night",
+      },
+
+      {
+        label: "Event",
+        value: "Event",
+      },
+      {
+        label: "Resort",
+        value: "Resort",
+      },
+      {
+        label: "Gifts",
+        value: "gifts",
+      },
+    ],
+  },
 ];
 
 const categoryOptions = [
