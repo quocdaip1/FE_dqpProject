@@ -5,24 +5,17 @@ import {
   Image,
   Text,
   Stack,
-  TabIndicator,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  List,
-  ListItem,
-  Button,
-  Icon,
   VStack,
   SimpleGrid,
+  Checkbox,
+  Divider,
 } from "@chakra-ui/react";
 import { UserProductDetails } from "../../components/popup";
 import React from "react";
 import axios from "axios";
 import { Pagination } from "../../components/common";
-import { Tabs, TabList, Tab } from "@chakra-ui/react";
-import { HiOutlineChevronRight, HiOutlineCube } from "react-icons/hi2";
+import { HiOutlineCube } from "react-icons/hi2";
+import { useSearchParams } from "react-router-dom";
 
 const subCategory = [
   {
@@ -91,6 +84,150 @@ const subCategory = [
   },
 ];
 
+const extraSubCategory = {
+  DC: {
+    label: "Kiểu dáng",
+    value: "event",
+    child: [
+      {
+        label: "Choker",
+        value: "choker",
+      },
+      {
+        label: "Chain Necklace",
+        value: "chainNecklace",
+      },
+
+      {
+        label: "Pendant Necklace",
+        value: "pendantNecklace",
+      },
+      {
+        label: "Statement Necklace",
+        value: "statementNecklace",
+      },
+      {
+        label: "Chain Layering",
+        value: "chainLayering",
+      },
+    ],
+  },
+  VT: {
+    label: "Kiểu dáng",
+    value: "event",
+    child: [
+      {
+        label: "Bangle",
+        value: "bangle",
+      },
+      {
+        label: "Chain Bracelet",
+        value: "chainBracelet",
+      },
+
+      {
+        label: "Charm Bracelet",
+        value: "charmBracelet",
+      },
+      {
+        label: "Bar Bracelet",
+        value: "barBracelet",
+      },
+      {
+        label: "Bracelet Stacking",
+        value: "braceletStacking",
+      },
+    ],
+  },
+  NH: {
+    label: "Kiểu dáng",
+    value: "event",
+    child: [
+      {
+        label: "Statement Ring",
+        value: "statementRing",
+      },
+      {
+        label: "Band Ring",
+        value: "bandRing",
+      },
+
+      {
+        label: "Chain Ring",
+        value: "chainRing",
+      },
+      {
+        label: "Dainty Ring",
+        value: "daintyRing",
+      },
+      {
+        label: "Ring Stacking",
+        value: "ringStacking",
+      },
+      {
+        label: "Signet Ring",
+        value: "signetRing",
+      },
+      {
+        label: "Braided Ring",
+        value: "braidedRing",
+      },
+    ],
+  },
+  HT: {
+    label: "Kiểu dáng",
+    value: "event",
+    child: [
+      {
+        label: "Studs",
+        value: "studs",
+      },
+      {
+        label: "Huggies",
+        value: "huggies",
+      },
+
+      {
+        label: "Hoops",
+        value: "hoops",
+      },
+      {
+        label: "Drops",
+        value: "drops",
+      },
+      {
+        label: "Dangles",
+        value: "dangles",
+      },
+      {
+        label: "Jacket Earrings",
+        value: "jacketErrings",
+      },
+      {
+        label: "Ear Cuffs",
+        value: "earCuffs",
+      },
+
+      {
+        label: "Statement Earrings",
+        value: "statementEarrings",
+      },
+      {
+        label: "Ear Stacking",
+        value: "earStacking",
+      },
+      {
+        label: "Climber Earings",
+        value: "climberEarings",
+      },
+      {
+        label: "Cuff Earings",
+        value: "cuffEarings",
+      },
+    ],
+  },
+};
+
 const categoryOptions = [
   {
     label: "Dây chuyền",
@@ -111,6 +248,7 @@ const categoryOptions = [
 ];
 
 const Home = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [meta, setMeta] = React.useState({
     currentPage: 1,
     limit: 10,
@@ -119,9 +257,12 @@ const Home = () => {
   });
   const [payload, setPayload] = React.useState([]);
   const [product, setProduct] = React.useState(null);
-  const [tabIndex, setTabIndex] = React.useState(0);
   const [filter, setFilter] = React.useState({
+    page: 1,
+    limit: 10,
+    keyword: "",
     size: "",
+    event: "",
     style: "",
     material: "",
     categoryCode: "",
@@ -137,126 +278,56 @@ const Home = () => {
       },
     });
     const { items, meta } = response.data.payload;
-    setMeta(meta);
     setPayload(items);
+    setMeta(meta);
   };
 
   React.useEffect(() => {
-    fetchProduct(1, filter);
+    fetchProduct();
   }, []);
 
-  const onFilter = async (category, subCategory, childSub) => {
+  React.useEffect(() => {
+    const keyword = searchParams.get("keyword") || "";
+    const categoryCode = searchParams.get("categoryCode") || "";
+    const includesCategoryCode = ["DC", "VT", "NH", "HT"].includes(
+      categoryCode
+    );
+    if (!categoryCode || !includesCategoryCode) {
+      searchParams.set("categoryCode", "DC");
+      setSearchParams(searchParams);
+    }
+    const newFilter = { ...filter, keyword, categoryCode };
+
+    setFilter(newFilter);
+    fetchProduct(1, newFilter);
+  }, [searchParams]);
+
+  const onFilter = (subCategory, childSub) => {
     const newFilter = {
       ...filter,
-      size: "",
-      style: "",
-      material: "",
-      categoryCode: category,
+      [subCategory]: childSub,
     };
-    if (childSub && subCategory) newFilter[subCategory] = childSub;
-
-    await setFilter(newFilter);
+    setFilter(newFilter);
     fetchProduct(1, newFilter);
   };
 
-  const _renderCategoryBar = () => {
-    return (
-      <Stack padding="10px">
-        <Tabs position="relative" variant="unstyled" index={tabIndex}>
-          <TabList _focusVisible={false} boxShadow="none">
-            {categoryOptions.map((category, categoryIndex) => (
-              <Popover
-                trigger="hover"
-                placement="bottom-start"
-                key={`category-${category.label}`}
-              >
-                <PopoverTrigger>
-                  <Tab
-                    outline={0}
-                    border={0}
-                    boxShadow="none"
-                    _focus={{ boxShadow: "none", outline: "none" }}
-                    onClick={() => {
-                      setTabIndex(categoryIndex);
-                      onFilter(category.value, "", "");
-                    }}
-                  >
-                    {category.label}
-                  </Tab>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverBody padding={0}>
-                    <List spacing={3}>
-                      {subCategory.map((sub) => (
-                        <ListItem key={`sub-${sub.label}-${category.label}`}>
-                          <ListItem>
-                            <Popover trigger="hover" placement="right-start">
-                              <PopoverTrigger>
-                                <Button
-                                  variant="ghost"
-                                  w="98%"
-                                  textAlign="left"
-                                  justifyContent="space-between"
-                                  rightIcon={
-                                    <Icon as={HiOutlineChevronRight} />
-                                  }
-                                >
-                                  {sub.label}
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent>
-                                <PopoverBody padding={0}>
-                                  <List spacing={3}>
-                                    {sub.child.map((item) => (
-                                      <ListItem
-                                        key={`child-sub-${item.value}-${sub.label}-${category.label}`}
-                                      >
-                                        <Button
-                                          variant="ghost"
-                                          w="100%"
-                                          textAlign="left"
-                                          justifyContent="space-between"
-                                          onClick={() => {
-                                            setTabIndex(categoryIndex);
-                                            onFilter(
-                                              category.value,
-                                              sub.value,
-                                              item.value
-                                            );
-                                          }}
-                                        >
-                                          {item.label}
-                                        </Button>
-                                      </ListItem>
-                                    ))}
-                                  </List>
-                                </PopoverBody>
-                              </PopoverContent>
-                            </Popover>
-                          </ListItem>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
-            ))}
-          </TabList>
-          <TabIndicator
-            mt="-1.5px"
-            height="2px"
-            bg="blue.500"
-            borderRadius="1px"
-          />
-        </Tabs>
-      </Stack>
-    );
-  };
+  const resolveSubCategory = React.useMemo(() => {
+    const categoryCode =
+      (searchParams.get("categoryCode") && searchParams.get("categoryCode")) ||
+      "DC";
+    const resolveCategoryCode = ["DC", "VT", "NH", "HT"].includes(categoryCode)
+      ? categoryCode
+      : "DC";
+    const result = [...subCategory];
+    const findExtraSubCategory = extraSubCategory[resolveCategoryCode];
+    result.push(findExtraSubCategory);
+    return result;
+  }, [searchParams]);
 
   const _renderProduct = () =>
-    payload.map((item, index) => (
+    payload.map((item) => (
       <GridItem
-        key={`product ${index}`}
+        key={`product-${item.id}`}
         w="100%"
         h="auto"
         display="flex"
@@ -278,20 +349,20 @@ const Home = () => {
           />
         </AspectRatio>
         <Text
-          fontSize="14px"
+          fontSize="13px"
           fontWeight={600}
           lineHeight="22px"
           flex={1}
-          padding="8px 4px"
+          padding="4px 4px"
         >
           {item.name}
         </Text>
         <Text
           color="#e8002d"
           lineHeight="23px"
-          fontSize="16px"
-          fontWeight={700}
-          padding="8px 4px"
+          fontSize="15px"
+          fontWeight={500}
+          padding="4px 4px"
         >
           {item.price.toLocaleString("vn-VI", {
             style: "currency",
@@ -309,27 +380,99 @@ const Home = () => {
           onClose={() => setProduct(null)}
           product={product}
         />
-        {_renderCategoryBar()}
-        {payload.length > 0 ? (
-          <SimpleGrid columns={[1, 2, 3, 4]} gap={5} flex={1}>
-            {_renderProduct()}
-          </SimpleGrid>
-        ) : (
-          <VStack padding="40px 20px">
-            <HiOutlineCube size="100" />
-            <Text>Không có sản phẩm nào được tìm thấy</Text>
-          </VStack>
-        )}
+        <Stack flexDirection={["column", "column", "row"]}>
+          <Stack w={["100%", "100%", "260px"]} marginRight="20px">
+            <Text
+              fontWeight={600}
+              fontSize="md"
+              textTransform="uppercase"
+              background="#f7f8f9"
+              padding="6px 10px"
+            >
+              Danh mục sản phẩm
+            </Text>
+            <Stack
+              flexDirection={["row", "row", "column"]}
+              flexWrap="wrap"
+              boxShadow="base"
+              padding="15px"
+            >
+              {resolveSubCategory.map((sub, index) => (
+                <React.Fragment key={`sub-${sub.value}-${index}`}>
+                  <Stack direction="column" minWidth="280px">
+                    <Text
+                      fontSize="md"
+                      fontWeight={600}
+                      textTransform="uppercase"
+                    >
+                      {sub?.label}
+                    </Text>
+
+                    {sub.child.map((item) => {
+                      return (
+                        <Checkbox
+                          size="sm"
+                          key={`option-${sub.value}-${item.value}`}
+                          onChange={() =>
+                            onFilter(
+                              sub.value,
+                              filter?.[sub.value] === item.value
+                                ? ""
+                                : item.value
+                            )
+                          }
+                          isChecked={filter?.[sub.value] === item.value}
+                          defaultChecked={false}
+                        >
+                          {item?.label}
+                        </Checkbox>
+                      );
+                    })}
+                  </Stack>
+                  {index < subCategory.length ? (
+                    <Divider margin="15px 0" />
+                  ) : null}
+                </React.Fragment>
+              ))}
+            </Stack>
+          </Stack>
+          <Stack flex={1} marginTop="0 !important">
+            <Stack>
+              <Text
+                fontWeight={600}
+                fontSize="md"
+                textTransform="uppercase"
+                background="#f7f8f9"
+                padding="6px 10px"
+              >
+                {searchParams.get("categoryCode") &&
+                ["DC", "VT", "NH", "HT"].includes(
+                  searchParams.get("categoryCode")
+                )
+                  ? categoryOptions.find(
+                      (item) => item.value === searchParams.get("categoryCode")
+                    )?.label
+                  : "Dây chuyền"}
+              </Text>
+            </Stack>
+            {payload.length > 0 ? (
+              <SimpleGrid columns={[1, 2, 3, 4]} gap={5}>
+                {_renderProduct()}
+              </SimpleGrid>
+            ) : (
+              <VStack padding="40px 20px">
+                <HiOutlineCube size="100" />
+                <Text>Không có sản phẩm nào được tìm thấy</Text>
+              </VStack>
+            )}
+            <Pagination onClick={fetchProduct} meta={meta} />
+          </Stack>
+        </Stack>
       </Box>
     );
   };
 
-  return (
-    <>
-      {_renderProductSection()}
-      <Pagination onClick={fetchProduct} meta={meta} />
-    </>
-  );
+  return <>{_renderProductSection()}</>;
 };
 
 export default Home;

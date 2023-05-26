@@ -100,7 +100,7 @@ const ProductList = () => {
   }, []);
 
   return (
-    <Container maxW="3xl" h="100%" padding="15px">
+    <Container maxW="6xl" h="100%" padding="15px">
       <AdminProductDetails
         isOpen={isShowPopup}
         onClose={() => {

@@ -6,6 +6,7 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import UserProductDetails from "./UserProductDetails";
 import Profile from "./Profile";
+import InvoiceHistory from "./InvoiceHistory";
 
 export {
   AdminInvoiceDetails,
@@ -15,5 +16,6 @@ export {
   SignIn,
   SignUp,
   UserProductDetails,
-  Profile
+  Profile,
+  InvoiceHistory,
 };
