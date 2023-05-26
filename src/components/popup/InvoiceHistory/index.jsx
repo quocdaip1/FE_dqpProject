@@ -3,6 +3,7 @@ import React from "react";
 import {
   Box,
   Button,
+  IconButton,
   Modal,
   ModalBody,
   ModalContent,
@@ -21,6 +22,8 @@ import {
 } from "@chakra-ui/react";
 import { getToken, getUserData } from "../../../lib/utils";
 import axios from "axios";
+import { HiOutlineEye } from "react-icons/hi2";
+import InvoiceDetails from "../InvoiceDetails";
 
 const InvoiceHistory = (payload) => {
   const toast = useToast();
@@ -29,6 +32,8 @@ const InvoiceHistory = (payload) => {
   const finalRef = React.useRef(null);
   const userData = getUserData();
   const [invoices, setInvoices] = React.useState([]);
+  const [isShowPopup, setIsShowPopup] = React.useState(false);
+  const [invoice, setInvoice] = React.useState(null);
 
   const fetchInvoiceHistory = async () => {
     const response = await axios.get(
@@ -87,6 +92,14 @@ const InvoiceHistory = (payload) => {
       onClose={payload.onClose}
       size="4xl"
     >
+      <InvoiceDetails
+        isOpen={isShowPopup}
+        onClose={() => {
+          setIsShowPopup(false);
+          setInvoice(null);
+        }}
+        invoice={invoice}
+      />
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Lịch sử mua hàng</ModalHeader>
@@ -101,6 +114,7 @@ const InvoiceHistory = (payload) => {
                     <Th>Phí vận chuyển</Th>
                     <Th>Tổng</Th>
                     <Th>Trạng thái</Th>
+                    <Th>Hành động</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -140,6 +154,16 @@ const InvoiceHistory = (payload) => {
                             <option value="pending">Đang chờ</option>
                             <option value="canceled">Hủy</option>
                           </Select>
+                        </Td>
+                        <Td>
+                          <IconButton
+                            onClick={() => {
+                              setInvoice(item);
+                              setIsShowPopup(true);
+                            }}
+                          >
+                            <HiOutlineEye />
+                          </IconButton>
                         </Td>
                       </Tr>
                     ))

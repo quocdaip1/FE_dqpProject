@@ -1,6 +1,6 @@
 import { Button, HStack, Text } from "@chakra-ui/react";
 import React from "react";
-import { AdminUserDetails } from "../popup";
+import { AdminUserDetails, Profile } from "../popup";
 import { clearCookie } from "../../lib/utils";
 import { useNavigate } from "react-router";
 
@@ -15,7 +15,7 @@ const Sidebar = () => {
 
   return (
     <HStack boxShadow="base" h="100%" p="20px" justifyContent="space-between">
-      <AdminUserDetails isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <Profile isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <Text>Trang quản lý</Text>
       <HStack>
         <Button

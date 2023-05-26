@@ -17,6 +17,7 @@ import {
   Wrap,
   IconButton,
   useToast,
+  Center,
 } from "@chakra-ui/react";
 import { Pagination } from "../../components/common";
 import { AdminUserDetails } from "../../components/popup";
@@ -87,10 +88,14 @@ const UserList = () => {
 
   return (
     <Container maxW="6xl" h="100%" padding="15px">
-      <AdminUserDetails isOpen={isOpen} onClose={() => {
-        setUser(null);
-        setIsOpen(false);
-      }} user={user} />
+      <AdminUserDetails
+        isOpen={isOpen}
+        onClose={() => {
+          setUser(null);
+          setIsOpen(false);
+        }}
+        user={user}
+      />
       <Box boxShadow="xl" h="auto" p="20px" borderRadius={10}>
         <Text fontSize="xl" marginBottom="10px">
           Người dùng
@@ -144,28 +149,30 @@ const UserList = () => {
         </HStack>
 
         <TableContainer>
-          <Table variant="striped" size="sm">
+          <Table variant="simple" size="sm">
             <Thead>
               <Tr>
                 <Th>Họ và tên</Th>
                 <Th>Email</Th>
                 <Th>Số ĐT</Th>
                 <Th>Trạng thái</Th>
-                <Th>Hành động</Th>
+                <Th textAlign="left">Hành động</Th>
               </Tr>
             </Thead>
             <Tbody>
               {payload.length > 0 ? (
                 payload.map((item, index) => (
                   <Tr key={`row-${index}`}>
-                    <Td>
+                    <Td fontWeight={500}>
                       {item.firstName || item.lastName
                         ? `${item.firstName} ${item.lastName}`
                         : "Chưa cập nhật"}
                     </Td>
-                    <Td>{item.email}</Td>
-                    <Td>{item.phonenumber || "Chưa xác định"}</Td>
-                    <Td>
+                    <Td fontWeight={500}>{item.email}</Td>
+                    <Td fontWeight={500}>
+                      {item.phonenumber || "Chưa xác định"}
+                    </Td>
+                    <Td fontWeight={500}>
                       <Select
                         placeholder="Trạng thái"
                         w="180px"
@@ -178,12 +185,16 @@ const UserList = () => {
                       </Select>
                     </Td>
                     <Td>
-                      <IconButton onClick={() => {
-                        setUser(item);
-                        setIsOpen(true);
-                      }}>
-                        <HiOutlineEye />
-                      </IconButton>
+                      <Center>
+                        <IconButton
+                          onClick={() => {
+                            setUser(item);
+                            setIsOpen(true);
+                          }}
+                        >
+                          <HiOutlineEye />
+                        </IconButton>
+                      </Center>
                     </Td>
                   </Tr>
                 ))
