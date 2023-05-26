@@ -63,7 +63,6 @@ const AdminUserDetails = (payload) => {
   React.useEffect(() => {
     if (!payload.isOpen) reset();
     else if (payload.isOpen && userData) {
-      console.log(userData);
       setValue("firstName", userData.firstName);
       setValue("lastName", userData.lastName);
       setValue("email", userData.email);

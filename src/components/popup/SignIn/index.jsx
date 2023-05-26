@@ -48,7 +48,6 @@ const SignIn = (payload) => {
       .post("http://localhost:8080/api/auth/signin", data)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response);
           const { accessToken, user } = response.data.payload;
           setUserData(user);
           setToken(accessToken);
