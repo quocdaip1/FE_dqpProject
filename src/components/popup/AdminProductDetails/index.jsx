@@ -252,8 +252,22 @@ const AdminProductDetails = (payload) => {
   const watchCategory = watch("categoryCode");
 
   React.useEffect(() => {
-    if (!payload.isOpen) reset();
-    else if (payload.isOpen && payload.product) {
+    if (!payload.isOpen) {
+      reset({
+        name: '',
+        categoryCode: '',
+        subCategoryCode: '',
+        status: '',
+        size: '',
+        quantity: '',
+        style: '',
+        price: '',
+        material: '',
+        description: '',
+        event: '',
+        image: '',
+      });
+    } else if (payload.isOpen && payload.product) {
       setValue("name", payload.product.name);
       setValue("categoryCode", payload.product.categoryCode);
       setValue("subCategoryCode", payload.product.subCategoryCode);
@@ -472,7 +486,7 @@ const AdminProductDetails = (payload) => {
                     <Select placeholder="Kích cỡ" {...field} required={false}>
                       <option value="small">Nhỏ</option>
                       <option value="medium">Trung</option>
-                      <option value="large">Lớn</option>
+                      <option value="big">Lớn</option>
                     </Select>
                   )}
                 />

@@ -1,6 +1,6 @@
 import { Button, HStack, Text } from "@chakra-ui/react";
 import React from "react";
-import { AdminUserDetails, Profile } from "../popup";
+import { Profile } from "../popup";
 import { clearCookie } from "../../lib/utils";
 import { useNavigate } from "react-router";
 

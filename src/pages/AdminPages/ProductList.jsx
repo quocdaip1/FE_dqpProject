@@ -17,12 +17,13 @@ import {
   Wrap,
   IconButton,
   Center,
+  Stack,
 } from "@chakra-ui/react";
 import { Pagination } from "../../components/common";
 import React from "react";
 import axios from "axios";
 import { AdminProductDetails } from "../../components/popup";
-import { HiOutlineEye } from "react-icons/hi2";
+import { HiOutlineEye, HiStar } from "react-icons/hi2";
 
 const categoryOptions = [
   {
@@ -176,6 +177,8 @@ const ProductList = () => {
                 <Th>Loại</Th>
                 <Th>Kích cỡ</Th>
                 <Th>Đơn giá</Th>
+                <Th>Đánh giá</Th>
+                <Th>Tổng bình luận</Th>
                 <Th>Trạng thái</Th>
                 <Th textAlign="center">Hành động</Th>
               </Tr>
@@ -204,6 +207,26 @@ const ProductList = () => {
                         style: "currency",
                         currency: "VND",
                       })}
+                    </Td>
+                    <Td fontWeight={500}>
+                      <Stack
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Text marginTop="0px !important">
+                          {" "}
+                          {item.rate || 0}
+                        </Text>{" "}
+                        <HiStar
+                          style={{ marginTop: "0px", marginLeft: "5px" }}
+                        />
+                      </Stack>
+                    </Td>
+                    <Td fontWeight={500}>
+                      <Text textAlign="center">
+                        {item.rattings.length || 0}
+                      </Text>
                     </Td>
                     <Td fontWeight={500}>
                       {

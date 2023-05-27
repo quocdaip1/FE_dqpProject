@@ -1,4 +1,15 @@
-import { Box, Container, Grid, GridItem, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Grid,
+  GridItem,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+} from "@chakra-ui/react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -72,6 +83,34 @@ const Dashboard = () => {
       },
     ],
   });
+  const [rattingChartProps, setRattingChartProps] = React.useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Sản phẩm đánh giá cao nhất",
+        data: [],
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(255, 205, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(201, 203, 207, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 99, 132)",
+          "rgb(255, 159, 64)",
+          "rgb(255, 205, 86)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+          "rgb(201, 203, 207)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  });
   const fetchStatistic = async () => {
     const invoices = await axios.get("http://localhost:8080/api/invoices", {
       params: {
@@ -102,6 +141,12 @@ const Dashboard = () => {
         "x-access-token": getToken(),
       },
     });
+    const rattings = await axios.get("http://localhost:8080/api/rattings", {
+      params: {},
+      headers: {
+        "x-access-token": getToken(),
+      },
+    });
 
     const productDashboard = await axios.get(
       "http://localhost:8080/api/dashboard",
@@ -116,9 +161,17 @@ const Dashboard = () => {
     const resolveChartLabel = [];
     const resolveChartData = [];
 
+    const ratingChartLabel = [];
+    const ratingChartData = [];
+
     productDashboard.data.payload.forEach((item) => {
       resolveChartLabel.push(item.name);
       resolveChartData.push(item.total);
+    });
+
+    rattings.data.payload.forEach((item) => {
+      ratingChartLabel.push(item.name);
+      ratingChartData.push(item.total);
     });
 
     setChartProps({
@@ -127,6 +180,34 @@ const Dashboard = () => {
         {
           label: "Sản phẩm bán chạy nhất",
           data: resolveChartData,
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+            "rgba(255, 205, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(201, 203, 207, 0.2)",
+          ],
+          borderColor: [
+            "rgb(255, 99, 132)",
+            "rgb(255, 159, 64)",
+            "rgb(255, 205, 86)",
+            "rgb(75, 192, 192)",
+            "rgb(54, 162, 235)",
+            "rgb(153, 102, 255)",
+            "rgb(201, 203, 207)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    });
+    setRattingChartProps({
+      labels: ratingChartLabel,
+      datasets: [
+        {
+          label: "Sản phẩm đánh giá cao nhất",
+          data: ratingChartData,
           backgroundColor: [
             "rgba(255, 99, 132, 0.2)",
             "rgba(255, 159, 64, 0.2)",
@@ -188,7 +269,50 @@ const Dashboard = () => {
           </GridItem>
         </Grid>
         <Box w="100%" marginTop="36px">
-          <Bar options={options} data={chartProps} />
+          <Tabs>
+            <TabList>
+              <Tab
+                sx={{
+                  outline: "0 !important",
+                  borderTopColor: "transparent !important",
+                  borderLeftColor: "transparent !important",
+                  borderRightColor: "transparent !important",
+                  // border: "none !important",
+                  borderRadius: "0px",
+                }}
+                _focus={{
+                  boxShadow: "none",
+                }}
+              >
+                Top 10 sản phẩm bán chạy nhất
+              </Tab>
+              <Tab
+                sx={{
+                  outline: "0 !important",
+                  // border: "none !important",
+                  borderTopColor: "transparent !important",
+                  borderLeftColor: "transparent !important",
+                  borderRightColor: "transparent !important",
+                  // border: "none !important",
+                  borderRadius: "0px",
+                }}
+                _focus={{
+                  boxShadow: "none",
+                }}
+              >
+                Top 10 sản phẩm đánh giá cao nhất
+              </Tab>
+            </TabList>
+
+            <TabPanels>
+              <TabPanel>
+                <Bar options={options} data={chartProps} />
+              </TabPanel>
+              <TabPanel>
+                <Bar options={options} data={rattingChartProps} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Box>
       </Box>
     </Container>

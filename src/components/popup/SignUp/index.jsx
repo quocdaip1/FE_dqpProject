@@ -59,7 +59,7 @@ const SignUp = (payload) => {
       ...data,
       role: "user",
     });
-    const { status, message } = response.data.payload;
+    const { status, message } = response.data;
 
     if (status) {
       payload.onClose();
