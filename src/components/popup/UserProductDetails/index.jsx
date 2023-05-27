@@ -156,7 +156,7 @@ const UserProductDetails = (payload) => {
                 </AspectRatio>
                 <Stack flex={1} alignItems="flex-start">
                   <Text fontSize="2xl" fontWeight={600}>
-                    {payload.product?.name}
+                    {payload.product?.name} ({payload.product?.rate} / 5)
                   </Text>
                   <Rating
                     size={10}

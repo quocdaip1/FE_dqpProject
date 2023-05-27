@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Box, Icon, Stack, Text } from "@chakra-ui/react";
+import { Box, Icon, Stack } from "@chakra-ui/react";
 import { HiOutlineStar, HiStar } from "react-icons/hi2";
 
 const Rating = React.forwardRef(({ size, scale, disabled, onChange, value = 0 }, ref) => {
@@ -58,14 +58,14 @@ const Rating = React.forwardRef(({ size, scale, disabled, onChange, value = 0 },
   }
 
   return (
-    <Stack isInline alignItems="center" marginTop="0px !important">
+    <Stack isInline alignItems="center" marginTop="0px !important" title={value}>
       <input name="rating" type="hidden" value={value} ref={ref} />
       {buttons}
-      <Box width={`${size * 1.5}px`} textAlign="center">
+      {/* <Box width={`${size * 1.5}px`} textAlign="center">
         <Text fontSize="sm" fontWeight="semibold" lineHeight="1.2em">
           {value}
         </Text>
-      </Box>
+      </Box> */}
     </Stack>
   );
 });

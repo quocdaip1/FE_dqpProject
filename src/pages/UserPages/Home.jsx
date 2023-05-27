@@ -285,9 +285,13 @@ const Home = () => {
           flex={1}
           padding="4px 4px"
         >
-          {item.name} - {item.code}
+          {item.name} - {item.code} ({item.rate} / 5)
         </Text>
-        <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+        <Stack
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Text
             color="#e8002d"
             lineHeight="23px"
