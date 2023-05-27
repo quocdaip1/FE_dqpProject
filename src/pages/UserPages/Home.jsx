@@ -277,7 +277,7 @@ const Home = () => {
           flex={1}
           padding="4px 4px"
         >
-          {item.name}
+          {item.name} - {item.code}
         </Text>
         <Text
           color="#e8002d"

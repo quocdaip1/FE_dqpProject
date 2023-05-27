@@ -77,7 +77,7 @@ const navigation = [
     enable: false,
   },
   {
-    label: "Product",
+    label: "Shop",
     value: "product",
     enable: true,
     child: [
