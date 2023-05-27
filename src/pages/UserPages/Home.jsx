@@ -13,7 +13,7 @@ import {
 import { UserProductDetails } from "../../components/popup";
 import React from "react";
 import axios from "axios";
-import { Pagination } from "../../components/common";
+import { Pagination, Rating } from "../../components/common";
 import { HiOutlineCube } from "react-icons/hi2";
 import { useSearchParams } from "react-router-dom";
 
@@ -177,6 +177,7 @@ const Home = () => {
     totalPage: 0,
   });
   const [payload, setPayload] = React.useState([]);
+  const [isOpen, setIsOpen] = React.useState(false);
   const [product, setProduct] = React.useState(null);
   const [filter, setFilter] = React.useState({
     page: 1,
@@ -211,6 +212,10 @@ const Home = () => {
     const { items, meta } = response.data.payload;
     setPayload(items);
     setMeta(meta);
+    if (product) {
+      const findProduct = items.find((item) => item.id === product.id);
+      setProduct(findProduct);
+    }
   };
 
   React.useEffect(() => {
@@ -257,10 +262,13 @@ const Home = () => {
         _hover={{
           cursor: "pointer",
           boxShadow: "base",
-          padding: "10px",
+          padding: "5px",
           transition: "all ease 0.25s",
         }}
-        onClick={() => setProduct(item)}
+        onClick={() => {
+          setProduct(item);
+          setIsOpen(true);
+        }}
       >
         <AspectRatio maxW="100%" ratio={1} bg="rgba(0,0,0,0.1)">
           <Image
@@ -279,18 +287,22 @@ const Home = () => {
         >
           {item.name} - {item.code}
         </Text>
-        <Text
-          color="#e8002d"
-          lineHeight="23px"
-          fontSize="15px"
-          fontWeight={500}
-          padding="4px 4px"
-        >
-          {item.price.toLocaleString("vn-VI", {
-            style: "currency",
-            currency: "VND",
-          })}
-        </Text>
+        <Stack flexDirection="row" alignItems="center" justifyContent="space-between">
+          <Text
+            color="#e8002d"
+            lineHeight="23px"
+            fontSize="15px"
+            fontWeight={500}
+            padding="4px 4px"
+            marginTop="0px !important"
+          >
+            {item.price.toLocaleString("vi-VI", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </Text>
+          <Rating size={10} scale={5} disabled value={item.rate} />
+        </Stack>
       </GridItem>
     ));
 
@@ -298,8 +310,13 @@ const Home = () => {
     return (
       <Box as="section" flex={1}>
         <UserProductDetails
-          isOpen={Boolean(product)}
-          onClose={() => setProduct(null)}
+          isOpen={isOpen}
+          onClose={() => {
+            setProduct(null);
+            fetchProduct(meta.currentPage, filter);
+            setIsOpen(false);
+          }}
+          onFetch={() => fetchProduct(meta.currentPage, filter)}
           product={product}
         />
         <Stack flexDirection={["column", "column", "row"]}>
