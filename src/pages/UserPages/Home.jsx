@@ -399,7 +399,7 @@ const Home = () => {
               </Text>
             </Stack>
             {payload.length > 0 ? (
-              <SimpleGrid columns={[1, 2, 3, 4]} gap={5}>
+              <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
                 {_renderProduct()}
               </SimpleGrid>
             ) : (

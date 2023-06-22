@@ -61,6 +61,7 @@ import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCart, setCart } from "../../cartSlice";
 import UserInvoiceDetails from "../popup/UserInvoiceDetails";
+import Bookmarks from "../popup/bookmarks";
 import { useSearchParams } from "react-router-dom";
 import {
   Accordion,
@@ -249,6 +250,7 @@ const AccountButton = (payload) => {
   const [isShowSignInPopup, setIsShowSignInPopup] = React.useState(false);
   const [isShowSignUpPopup, setIsShowSignUpPopup] = React.useState(false);
   const [isShowInvoiceHistory, setIsSHowInvoiceHistory] = React.useState(false);
+  const [isShowBookmarks, setIsSHowBookmarks] = React.useState(false);
   const { onOpen, onClose, isOpen } = useDisclosure();
 
   const onSignIn = () => {
@@ -292,7 +294,10 @@ const AccountButton = (payload) => {
         isOpen={isShowInvoiceHistory}
         onClose={() => setIsSHowInvoiceHistory(false)}
       />
-
+      <Bookmarks
+        isOpen={isShowBookmarks}
+        onClose={() => setIsSHowBookmarks(false)}
+      />
       <Popover
         isOpen={isOpen}
         onOpen={onOpen}
@@ -364,6 +369,18 @@ const AccountButton = (payload) => {
                   </Text>
                 </Button>
               ) : null}
+              <Button
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                variant="ghost"
+                onClick={() => setIsSHowBookmarks(true)}
+              >
+                <Icon as={HiOutlineRectangleStack} />
+                <Text fontSize="xs" ml="6px">
+                  Yêu Thích
+                </Text>
+              </Button>
               <Button
                 display="flex"
                 flexDirection="row"

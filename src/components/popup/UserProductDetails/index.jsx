@@ -29,9 +29,15 @@ import {
   Th,
   Tr,
 } from "@chakra-ui/react";
+import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCart, setCart } from "../../../cartSlice";
-import { getToken, getUserData, setCartCookies } from "../../../lib/utils";
+import {
+  getToken,
+  getUserData,
+  setCartCookies,
+  setUserData,
+} from "../../../lib/utils";
 import { Rating } from "../../common";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
@@ -56,9 +62,26 @@ const UserProductDetails = (payload) => {
   // const [isRated, setIsRated] = React.useState(false);
   let isRated = false;
   const userData = getUserData();
+  const [savedProduct, setSavedProduct] = React.useState([]);
   const token = getToken();
 
   const toast = useToast();
+
+  const getUserFav = async () => {
+    const res = await axios.get(
+      `http://localhost:8080/api/users/${userData.id}`,
+      {
+        headers: {
+          "x-access-token": getToken(),
+        },
+      }
+    );
+    setSavedProduct(res.data?.payload?.productSaveds || []);
+  };
+
+  React.useEffect(() => {
+    getUserFav();
+  }, []);
 
   const {
     control,
@@ -125,6 +148,62 @@ const UserProductDetails = (payload) => {
       });
   };
 
+  const onSaveBookMark = (isRemove) => {
+    if (!isRemove)
+      axios
+        .post(
+          "http://localhost:8080/api/bookmark",
+          {
+            productCode: payload.product.code,
+          },
+          {
+            headers: {
+              "x-access-token": getToken(),
+            },
+          }
+        )
+        .then(async (response) => {
+          if (response.status === 200) {
+            getUserFav();
+          }
+        })
+        .catch((e) => {
+          toast({
+            title: e.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+    else
+      axios
+        .put(
+          "http://localhost:8080/api/bookmark/" +
+            _.find(savedProduct, ["productId", payload.product?.id])?.id,
+          {
+            productCode: payload.product.code,
+          },
+          {
+            headers: {
+              "x-access-token": getToken(),
+            },
+          }
+        )
+        .then(async (response) => {
+          if (response.status === 200) {
+            getUserFav();
+          }
+        })
+        .catch((e) => {
+          toast({
+            title: e.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        });
+  };
+
   return (
     <Modal
       initialFocusRef={initialRef}
@@ -156,7 +235,7 @@ const UserProductDetails = (payload) => {
                 </AspectRatio>
                 <Stack flex={1} alignItems="flex-start">
                   <Text fontSize="2xl" fontWeight={600}>
-                    {payload.product?.name} ({payload.product?.rate} / 5)
+                    {payload.product?.name} ({payload.product?.rate || 0} / 5)
                   </Text>
                   <Rating
                     size={10}
@@ -335,6 +414,19 @@ const UserProductDetails = (payload) => {
         </ModalBody>
 
         <ModalFooter>
+          <Button
+            onClick={() =>
+              onSaveBookMark(
+                _.find(savedProduct, ["productId", payload.product?.id])
+              )
+            }
+            mr="3"
+            color="orange"
+          >
+            {_.find(savedProduct, ["productId", payload.product?.id])
+              ? "Bỏ yêu thích"
+              : "Thêm vào yêu thích"}
+          </Button>
           <Button onClick={payload.onClose}>Đóng</Button>
         </ModalFooter>
       </ModalContent>
