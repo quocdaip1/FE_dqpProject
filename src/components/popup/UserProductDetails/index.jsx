@@ -250,6 +250,17 @@ const UserProductDetails = (payload) => {
                     })}
                   </Text>
                   <Text>{payload.product?.description}</Text>
+                  <Text
+                    fontSize="2xl"
+                    color="red"
+                    marginBottom="24px"
+                    fontWeight={600}
+                  >
+                    {payload?.product?.quantity <= 0
+                      ? "Sản phẩm đã hết hàng, vui lòng quay lại vào ngày khác"
+                      : "Số lượng sản phẩm hiện có: " +
+                        payload?.product?.quantity}
+                  </Text>
                   <HStack>
                     <NumberInput
                       defaultValue={1}
@@ -265,7 +276,11 @@ const UserProductDetails = (payload) => {
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
-                    <Button onClick={() => onAddToCart()}>
+
+                    <Button
+                      onClick={() => onAddToCart()}
+                      isDisabled={payload?.product?.quantity <= 0}
+                    >
                       Thêm vào giỏ hàng
                     </Button>
                   </HStack>
@@ -393,6 +408,7 @@ const UserProductDetails = (payload) => {
                         type="submit"
                         colorScheme="blue"
                         mt="2"
+                        isDisabled={payload?.product?.quantity <= 0}
                       >
                         Đánh giá
                       </Button>
@@ -420,6 +436,7 @@ const UserProductDetails = (payload) => {
                 _.find(savedProduct, ["productId", payload.product?.id])
               )
             }
+            isDisabled={payload?.product?.quantity <= 0}
             mr="3"
             color="orange"
           >

@@ -173,16 +173,22 @@ const UserList = () => {
                       {item.phonenumber || "Chưa xác định"}
                     </Td>
                     <Td fontWeight={500}>
-                      <Select
-                        placeholder="Trạng thái"
-                        w="180px"
-                        size="sm"
-                        value={item.status}
-                        onChange={(e) => updateStatus(item.id, e.target.value)}
-                      >
-                        <option value="active">Hoạt động</option>
-                        <option value="inactive">Không hoạt động</option>
-                      </Select>
+                      {item.email === "admin@gmail.com" ? (
+                        "" // Render an empty value when email is "admin@gmail.com"
+                      ) : (
+                        <Select
+                          placeholder="Trạng thái"
+                          w="180px"
+                          size="sm"
+                          value={item.status}
+                          onChange={(e) =>
+                            updateStatus(item.id, e.target.value)
+                          }
+                        >
+                          <option value="active">Hoạt động</option>
+                          <option value="inactive">Không hoạt động</option>
+                        </Select>
+                      )}
                     </Td>
                     <Td>
                       <Center>

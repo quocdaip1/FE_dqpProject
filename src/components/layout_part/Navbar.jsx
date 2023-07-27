@@ -4,6 +4,8 @@ import {
   HiOutlineUserGroup,
   HiOutlineClipboardDocumentList,
   HiOutlineArchiveBox,
+  HiChartBar,
+  HiShoppingCart,
 } from "react-icons/hi2";
 import { Link, useLocation } from "react-router-dom";
 
@@ -28,7 +30,6 @@ const Navbar = () => {
           </Text>
         </Button>
       </Link>
-
       <Link to="/quan-ly/san-pham">
         <Button
           display="flex"
@@ -42,6 +43,22 @@ const Navbar = () => {
           <Icon as={HiOutlineArchiveBox} />
           <Text fontSize="xs" mt="6px">
             Sản phẩm
+          </Text>
+        </Button>
+      </Link>
+      <Link to="/quan-ly/loai-san-pham">
+        <Button
+          display="flex"
+          flexDirection="column"
+          variant="ghost"
+          w="100%"
+          mb="10px"
+          py={8}
+          isActive={pathname === "/quan-ly/don-hang"}
+        >
+          <Icon as={HiShoppingCart} />
+          <Text fontSize="xs" mt="6px">
+            Category
           </Text>
         </Button>
       </Link>
@@ -74,6 +91,22 @@ const Navbar = () => {
           <Icon as={HiOutlineUserGroup} />
           <Text fontSize="xs" mt="6px">
             Người dùng
+          </Text>
+        </Button>
+      </Link>
+      <Link to="/quan-ly/thong-ke">
+        <Button
+          display="flex"
+          flexDirection="column"
+          variant="ghost"
+          w="100%"
+          mb="10px"
+          py={8}
+          isActive={pathname === "/quan-ly/thong-ke"}
+        >
+          <Icon as={HiChartBar} />
+          <Text fontSize="xs" mt="6px">
+            Thống kê doanh thu
           </Text>
         </Button>
       </Link>

@@ -7,10 +7,12 @@ import SignUp from "./SignUp";
 import UserProductDetails from "./UserProductDetails";
 import Profile from "./Profile";
 import InvoiceHistory from "./InvoiceHistory";
+import AdminCategoryDetails from "./AdminCategoryDetails";
 
 export {
   AdminInvoiceDetails,
   AdminProductDetails,
+  AdminCategoryDetails,
   AdminUserDetails,
   Cart,
   SignIn,

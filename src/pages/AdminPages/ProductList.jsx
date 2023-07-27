@@ -97,6 +97,7 @@ const ProductList = () => {
       },
     });
     const { items, meta } = response.data.payload;
+    console.log(response.data.payload);
     setMeta(meta);
     setPayload(items);
   };

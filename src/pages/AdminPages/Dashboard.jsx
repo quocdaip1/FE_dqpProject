@@ -111,7 +111,66 @@ const Dashboard = () => {
       },
     ],
   });
+
+  const fetchRatingsForAllProducts = async () => {
+    try {
+      const ratingsResponse = await axios.get(
+        "http://localhost:8080/api/ratings/all",
+        {
+          headers: {
+            "x-access-token": getToken(),
+          },
+        }
+      );
+
+      const allProductsRatings = ratingsResponse.data.payload;
+
+      // Prepare data for the chart
+      const ratingChartLabel = allProductsRatings.map((rating) => rating.productName);
+      const ratingChartData = allProductsRatings.map((rating) => rating.averageRating);
+
+      setRattingChartProps({
+        labels: ratingChartLabel,
+        datasets: [
+          {
+            label: "Sản phẩm đánh giá cao nhất",
+            data: ratingChartData,
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(255, 205, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(201, 203, 207, 0.2)",
+            ],
+            borderColor: [
+              "rgb(255, 99, 132)",
+              "rgb(255, 159, 64)",
+              "rgb(255, 205, 86)",
+              "rgb(75, 192, 192)",
+              "rgb(54, 162, 235)",
+              "rgb(153, 102, 255)",
+              "rgb(201, 203, 207)",
+            ],
+            borderWidth: 1,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error fetching ratings for all products:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchStatistic();
+    fetchRatingsForAllProducts(); // Fetch ratings for all products when the component mounts
+  }, []);
+
+  // ... (rest of the code
+
   const fetchStatistic = async () => {
+    console.log(getToken());
     const invoices = await axios.get("http://localhost:8080/api/invoices", {
       params: {
         page: 1,
@@ -302,11 +361,30 @@ const Dashboard = () => {
               >
                 Top 10 sản phẩm đánh giá cao nhất
               </Tab>
+              <Tab
+                sx={{
+                  outline: "0 !important",
+                  // border: "none !important",
+                  borderTopColor: "transparent !important",
+                  borderLeftColor: "transparent !important",
+                  borderRightColor: "transparent !important",
+                  // border: "none !important",
+                  borderRadius: "0px",
+                }}
+                _focus={{
+                  boxShadow: "none",
+                }}
+              >
+                Danh sách đánh giá của các sản phẩm
+              </Tab>
             </TabList>
 
             <TabPanels>
               <TabPanel>
                 <Bar options={options} data={chartProps} />
+              </TabPanel>
+              <TabPanel>
+                <Bar options={options} data={rattingChartProps} />
               </TabPanel>
               <TabPanel>
                 <Bar options={options} data={rattingChartProps} />

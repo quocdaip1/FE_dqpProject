@@ -26,7 +26,7 @@ const schema = yup
       .string()
       .email("Email chưa đúng định dạng!")
       .required("Email là trường bắt buộc!"),
-    password: yup.string().required("Email là trường bắt buộc!"),
+    password: yup.string().required("Password là trường bắt buộc!"),
   })
   .required();
 const SignIn = (payload) => {
@@ -56,12 +56,23 @@ const SignIn = (payload) => {
         }
       })
       .catch((e) => {
-        toast({
-          title: e.message,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        if (e.response && e.response.status === 404) {
+          // The user's account is locked (status is "inactive")
+          toast({
+            title: "Tài khoản của bạn đã bị admin khoá",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          // For other errors, show the standard error message
+          toast({
+            title: e.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
       });
   };
 

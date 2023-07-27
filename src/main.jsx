@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom/client";  
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import "./index.css";
 // 1. import `ChakraProvider` component
@@ -25,7 +25,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               />
               <Route path="don-hang" element={<AdminPages.InvoiceList />} />
               <Route path="san-pham" element={<AdminPages.ProductList />} />
+              <Route path="loai-san-pham" element={<AdminPages.CategoryList />} />
               <Route path="nguoi-dung" element={<AdminPages.UserList />} />
+              <Route path="thong-ke" element={<AdminPages.StatisticsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

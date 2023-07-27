@@ -104,7 +104,7 @@ const InvoiceList = () => {
                 <Th>Phí vận chuyển</Th>
                 <Th>Tổng</Th>
                 <Th>Trạng thái</Th>
-                <Th textAlign="center">Hành động</Th>
+                <Th textAlign="center">Xem chi tiết đơn hàng</Th>
               </Tr>
             </Thead>
             <Tbody>
